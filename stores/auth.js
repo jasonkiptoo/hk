@@ -23,9 +23,12 @@ export const useUserStore = defineStore('user', {
 
           return { accessToken, user };
         } else {
+          console.log(response, "ter")
           throw new Error("Invalid login credentials.");
         }
       } catch (error) {
+        console.log(error, "err")
+
         throw new Error(error.response?.data?.error?.message || "Login failed.");
       }
     },

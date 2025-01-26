@@ -55,10 +55,11 @@
               Enter the OTP sent to your email address. <span class="font-weight-bold" style="font-weight: bold;">{{
                 form.email }} </span>
             </p>
-            <div class="w-full mb-4">
-              <InputOtp :length="6" mask="*" v-model="otp" class="p-inputtex w-full text-center p-3"
+            <div class="w-full mb-4 flex justify-center items-center">
+              <InputOtp :length="6" mask="*" v-model="otp" size="large" class="text-center p-3"
                 placeholder="Enter OTP" />
             </div>
+
             <button @click="verifyOtp" class="w-full bg-red-500 text-white py-3 rounded hover:bg-red-600">
               Verify OTP
             </button>
@@ -126,7 +127,11 @@ export default {
         }
       } catch (error) {
         console.log("Vfvs", error)
-        // this.isVerified = true;
+        if (error.message === "Failed to login: This account is not yet verified , check your email for an otp to verify your account ") {
+          this.isVerified = true;  // Set isVerified to false if the account is not verified
+        } else {
+          this.isVerified = false;   // Set isVerified to true for other errors
+        }
         this.$toast.add({
           severity: "error",
           summary: error.message,
