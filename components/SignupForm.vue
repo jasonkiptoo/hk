@@ -108,7 +108,7 @@ export default {
           email: this.form.email,
           password: this.form.password,
           phoneNumber: this.form.phone || "",
-          roleId: this.form.role,
+          roleId: this.form.role.id,
         });
         // Simulate sending OTP
         this.otpSent = true;
