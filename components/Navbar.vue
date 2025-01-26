@@ -162,7 +162,7 @@
       <!-- cart count -->
       <div class="ml-4 hidden sm:flex flex-col font-bold">
         <span class="text-xs text-gray-400">Your Cart</span>
-        <span>KES {{ cartItems }}</span>
+        <span>KES {{ formattedPrice(cartTotal) }}</span>
         <button @click="updateLocation">{{ location }}</button>
       </div>
     </div>
@@ -205,10 +205,12 @@ const selectedCategory = ref("");
 const menuOpen = ref(false);
 const categories = ref([]);
 const cartCount = computed(() => productStore.cartCount);
+const cartTotal = computed(() => productStore.cartTotal);
 
 // Reactive wishlist count using computed
 const wishListCount = computed(() => productStore.wishListCount);
 const router = useRouter();
+const { $formatPrice } = useNuxtApp()
 
 const fetchCat = async () => {
   try {
@@ -219,6 +221,9 @@ const fetchCat = async () => {
     console.error("Error fetching categories:", error);
   }
 };
+const formattedPrice = (price) => {
+  return $formatPrice(price)
+}
 const cartItems = ref(0);
 
 const routeTo = () => {

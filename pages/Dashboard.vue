@@ -85,7 +85,7 @@
         <!-- Right Section -->
         <div class="w-3/4">
           <div v-if="products.length > 0" class="grid gap-3 grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4">
-            <ProductCard v-for="product in products" :key="product.id" :item="product" @wishlist-updated="handleWish" />
+            <ProductCard v-for="product in products" :key="product.id" :item="product" />
           </div>
           <div v-else class="text-center mt-6">
             <div class="relative flex justify-center items-center">
@@ -216,10 +216,6 @@ export default {
       currentIndex.value =
         (currentIndex.value - 1 + images.value.length) % images.value.length;
     };
-    const handleWish = () => {
-      console.log("Wishlist updated");
-      emit("refreshNavbar");
-    };
 
     const getItems = x => {
       console.log("ca", x);
@@ -275,8 +271,6 @@ export default {
 
           return product;
         });
-
-        products.value.unshift(dummy);
       } catch (error) {
         fetching.value = false
 
@@ -346,7 +340,6 @@ export default {
       productss,
       responsiveOptions,
       getItems,
-      handleWish,
       getSeverity, value
     };
   },

@@ -20,9 +20,11 @@ export const useProductStore = defineStore('product', {
         
         this.cartItems = response.data;  // Update the cart items
         this.cartCount = response.data.length; // Update the cart item count
+        console.log(response.data)
 
         // Calculate the cart total (assuming each product has a price property)
-        this.cartTotal = response.data.reduce((total, item) => total + (item.quantity * item.price), 0);
+        this.cartTotal = response.data.reduce((total, item) => total + (item.quantity * item.product.defaultPrice), 0);
+        console.log(this.cartTotal, "cacsad")
       } catch (error) {
         console.error("Error fetching cart items:", error);
       }
@@ -32,15 +34,15 @@ export const useProductStore = defineStore('product', {
     async addToCart(productId, quantity) {
       try {
         const { $axios } = useNuxtApp();
-        const response = await $axios.post("/product/cart", { productId, quantity });
+        const response = await $axios.post("/product/cart/add", { productId, quantity });
+        // this.cartItems.push(response.data);
 
-        // Add the new item to cart items
-        this.cartItems.push(response.data);
-        
-        // Recalculate cart count and total
+       await this.getCartItems()
         this.cartCount = this.cartItems.length;
-        this.cartTotal += (quantity * response.data.price);
+        // this.cartTotal += (quantity * response.data.price);
+        return { response }; 
       } catch (error) {
+        
         console.error("Error adding to cart:", error);
       }
     },
@@ -49,17 +51,18 @@ export const useProductStore = defineStore('product', {
     async removeFromCart(productId) {
       try {
         const { $axios } = useNuxtApp();
-        await $axios.delete(`/product/cart/${productId}`);
+        await $axios.delete(`/product/cart/remove/${productId}`);
+        this.getCartItems()
         
         // Remove the item from cart items
-        const itemIndex = this.cartItems.findIndex(item => item.id === productId);
-        if (itemIndex !== -1) {
-          this.cartTotal -= (this.cartItems[itemIndex].quantity * this.cartItems[itemIndex].price);
-          this.cartItems.splice(itemIndex, 1);  // Remove item from cart
-        }
+        // const itemIndex = this.cartItems.findIndex(item => item.id === productId);
+        // if (itemIndex !== -1) {
+        //   this.cartTotal -= (this.cartItems[itemIndex].quantity * this.cartItems[itemIndex].price);
+        //   this.cartItems.splice(itemIndex, 1);  // Remove item from cart
+        // }
 
-        // Recalculate cart count
-        this.cartCount = this.cartItems.length;
+        // // Recalculate cart count
+        // this.cartCount = this.cartItems.length;
       } catch (error) {
         console.error("Error removing from cart:", error);
       }
@@ -82,23 +85,43 @@ export const useProductStore = defineStore('product', {
       }
     },
 
-    // Add a product to the wishlist
-    async addToWishlist(productId) {
-      try {
-        const { $axios } = useNuxtApp();
-        const product = {productId: productId}
-        await $axios.post("/product/wishlist/add", product);
-
-        // Update wishlist state
-        // this.wishListItems.push({ id: productId });
-        this.wishListCount = this.wishListItems.length;  // Update the wishlist count
-
-        // Optionally, persist to localStorage
+// Add a product to the wishlist
+// Add a product to the wishlist
+async addToWishlist(productId) {
+    try {
+      const { $axios } = useNuxtApp();
+      const product = { productId };
+  
+      // Send a POST request to the API
+      const res = await $axios.post("/product/wishlist/add", product);
+  
+      if (res) {
+        // Update wishlist count and persist to localStorage
+        this.wishListCount = this.wishListItems.length;
         localStorage.setItem("wishlist", JSON.stringify(this.wishListItems));
-      } catch (error) {
+        return { res }; // Return the response for further actions
+      }
+    } catch (error) {
+      if (error.response?.status === 401) {
+        console.warn("User is not logged in. Adding product to localStorage wishlist.");
+        // Add product to localStorage wishlist
+        const localWishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+        
+        // Prevent duplicate entries
+        if (!localWishlist.some((item) => item.id === productId)) {
+          localWishlist.push({ id: productId });
+          localStorage.setItem("wishlist", JSON.stringify(localWishlist));
+  
+          console.log("Product added to localStorage wishlist.");
+        } else {
+          console.log("Product already exists in localStorage wishlist.");
+        }
+      } else {
         console.error("Error adding to wishlist:", error);
       }
-    },
+    }
+  }
+,   
 
     // Remove a product from the wishlist
     async removeFromWishlist(productId) {

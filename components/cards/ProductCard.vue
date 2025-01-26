@@ -13,23 +13,20 @@
         </svg>
       </button>
     </div>
-    <div class="mt-4" @click="goToProductPage(item)">
-      <h3 class="font-bold text-lg">{{ item.name }}</h3>
-      <div class="flex items-center space-x-2 mt-2">
-        <p class="text-red-500 font-bold">KES {{ formattedPrice(item.defaultPrice) }}</p>
-        <!-- <p class="text-gray-400 line-through">${{ item.originalPrice }}</p> -->
-      </div>
-      <div class="p-4">
-        <!-- <div class="mb-4 font-medium">{{ slotProps.data.name }}</div> -->
-        <div class="flex justify-betweenitems-center">
-          <div class="mt-0 font-semibold text-xl">
-            <!-- {{ slotProps.data.price }} -->
+    <div class="mt-4">
+
+      <div class="">
+        <div class="flex justify-between items-center">
+          <div class="mt-0 font-semibold text-xl" @click="goToProductPage(item)">
+            <h3 class="font-bold text-lg">{{ item.name }}</h3>
+            <p class="text-red-500 font-bold space-x-2 mt-2">KES {{ formattedPrice(item.defaultPrice) }}</p>
+
           </div>
           <span>
-            <!-- <Button icon="pi pi-heart" severity="secondary" outlined /> -->
-            <Button icon="pi pi-shopping-cart" class="ml-2" />
+            <Button icon="pi pi-shopping-cart" class="ml-" @click="addToCart(item)" />
           </span>
         </div>
+
       </div>
       <div class="flex items-center mt-2">
         <div class="flex text-yellow-400">
@@ -63,6 +60,7 @@ const { $formatPrice } = useNuxtApp()
 
 const productStore = useProductStore()
 
+
 defineProps({
   item: {
     type: Object,
@@ -76,8 +74,10 @@ const formattedPrice = (price) => {
 const emit = defineEmits(["wishlist-updated"]);
 
 // defineEmits(["wishlist-updated"]);
-
-const wishList = ref([]); // Initialize wishlist as a reactive array
+// const wishList = ref([])
+const wishList = productStore.wishListItems; // Initialize wishlist as a reactive array
+// const wishList = computed(() => productStore.wishListItems);
+// const cartCount = computed(() => productStore.cartCount);
 
 // const location = ref('North Pole')
 
@@ -115,41 +115,46 @@ const checkUserLoggedIn = async () => {
 };
 
 function isInWishlist(productId) {
-  return wishList.value.includes(productId);
+  let wish = wishList.value
+  if (Array.isArray(wish)) {
+    return wishList.value.some((item) => item === productId);
+  }
+  return false;
 }
 
 
+
 const wishProduct = async (productId) => {
+  console.log(productId, "Attempting to add to wishlist");
+
   const productStore = useProductStore(); // Access the store
-  // const userStore = useProductStore(); // Access the store
+  const userStore = useUserStore(); // Access the user store for authentication state
+
   try {
-    // Check if the user is logged in or not
-    // const isLoggedIn = /* check if the user is logged in (for example, check token or auth state) */;
-
-    // If the user is logged in
     if (userStore.isLoggedIn) {
+      // Logged-in user: Add to the server-side wishlist
+      const { res } = await productStore.addToWishlist(productId);
+      await productStore.getWishList(); // Refresh wishlist from the server
 
-      // if (isLoggedIn) {
-      // Check if the product is already in the wishlist
-      // if (!productStore.wishListItems.some(item => item.id === productId)) {
-      await productStore.addToWishlist(productId);  // Add product to wishlist
-      // } else {
-      //   // Remove product from wishlist if already in the list (optional behavior)
-      //   await productStore.removeFromWishlist(productId);
-      // }
-
-      // Update wishlist data from the store
-      await productStore.getWishList();
-    } else {
-      // If the user is not logged in, save wishlist to localStorage
+      toast.add({
+        severity: "success",
+        summary: res.data.message,
+        group: "br",
+        life: 3000,
+      });
+    }
+    else {
+      // Not logged in: Save to or remove from localStorage wishlist
       const localWishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
 
-      // If the product is not in the local wishlist, add it
-      if (!localWishlist.some(item => item.id === productId)) {
+      // Check if the product is already in the local wishlist
+      const existingIndex = localWishlist.findIndex((item) => item.id === productId);
+
+      if (existingIndex === -1) {
+        // Product is not in the wishlist, add it
         localWishlist.push({ id: productId });
         localStorage.setItem("wishlist", JSON.stringify(localWishlist));
 
-        // Show toast message for saving locally
         toast.add({
           severity: "success",
           summary: "Your Wishlist has been saved locally.",
@@ -157,22 +162,51 @@ const wishProduct = async (productId) => {
           life: 3000,
         });
       } else {
-        // Show message if the item is already in the local wishlist
+        // Product is already in the wishlist, remove it
+        localWishlist.splice(existingIndex, 1); // Remove the item from the array
+        localStorage.setItem("wishlist", JSON.stringify(localWishlist));
+
         toast.add({
           severity: "info",
-          summary: "This product is already in your local wishlist.",
+          summary: "The item has been removed from your local wishlist.",
           group: "br",
           life: 3000,
         });
       }
+
     }
   } catch (error) {
     console.error("Error processing wishlist:", error);
 
-    // Show error message
     toast.add({
       severity: "error",
       summary: "An error occurred while managing your wishlist.",
+      detail: error.message,
+      group: "br",
+      life: 5000,
+    });
+  }
+};
+
+const addToCart = async (product) => {
+  try {
+    const productStore = useProductStore(); // Access the store
+    const { response } = await productStore.addToCart(product.id, 1);
+
+    // Notify user on successful addition
+    toast.add({
+      severity: "success",
+      summary: "Product Added to Cart",
+      group: "br",
+      life: 3000,
+    });
+
+    console.log(response);
+  } catch (error) {
+    // Handle errors and show appropriate toast messages
+    toast.add({
+      severity: "error",
+      summary: "Failed to Add Product",
       detail: error.message,
       group: "br",
       life: 5000,
