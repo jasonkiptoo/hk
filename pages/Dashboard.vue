@@ -347,7 +347,7 @@ export default {
 
           const randomIndex = Math.floor(Math.random() * dummyImages.length);
           product.image = dummyImages[randomIndex];
-          product.price = Math.floor(Math.random() * (4000 - 1000 + 1)) + 1000;
+          // product.price = Math.floor(Math.random() * (4000 - 1000 + 1)) + 1000;
 
           return product;
         });

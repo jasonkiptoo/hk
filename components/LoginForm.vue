@@ -125,7 +125,8 @@ export default {
           this.$router.push("/dashboard"); // Navigate to the dashboard upon success
         }
       } catch (error) {
-        this.isVerified = true;
+        console.log("Vfvs", error)
+        // this.isVerified = true;
         this.$toast.add({
           severity: "error",
           summary: error.message,

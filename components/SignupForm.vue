@@ -14,6 +14,12 @@
             Enter your details below to sign up
           </p>
           <form v-if="!otpSent" @submit.prevent="register" class="w-full">
+            <div class="flex space-x-4 mb-4">
+              <input type="text" placeholder="First Name"
+                class="w-full md:w-1/2 border-b p-2 focus:outline-none focus:border-red-500" v-model="form.firstName" />
+              <input type="text" placeholder="Last Name"
+                class="w-full md:w-1/2 border-b p-2 focus:outline-none focus:border-red-500" v-model="form.lastName" />
+            </div>
             <input type="email" placeholder="Email"
               class="md:w-full sm:w-full w-full border-b p-2 mb-4 focus:outline-none focus:border-red-500"
               v-model="form.email" />
@@ -71,6 +77,8 @@ export default {
   data() {
     return {
       form: {
+        firstName: "",
+        lastName: "",
         email: "",
         password: "",
         phone: "",
@@ -95,8 +103,8 @@ export default {
 
         // Register the user
         await userStore.register({
-          firstName: this.form.email,
-          lastName: this.form.email,
+          firstName: this.form.firstName,
+          lastName: this.form.lastName,
           email: this.form.email,
           password: this.form.password,
           phoneNumber: this.form.phone || "",

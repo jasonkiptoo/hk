@@ -42,7 +42,7 @@ export const useUserStore = defineStore('user', {
           roleId,
         };
 
-        const response = await $axios.post("/admin/user/create-user", userData);
+        const response = await $axios.post("/auth/create-user", userData);
 
         const { accessToken, user } = response.data;
         // console.log(response.data, "resque user   ")

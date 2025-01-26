@@ -16,7 +16,7 @@
     <div class="mt-4" @click="goToProductPage(item)">
       <h3 class="font-bold text-lg">{{ item.name }}</h3>
       <div class="flex items-center space-x-2 mt-2">
-        <p class="text-red-500 font-bold">KES {{ item.price }}</p>
+        <p class="text-red-500 font-bold">KES {{ item.defaultPrice | formatNumberWithCommas }}</p>
         <!-- <p class="text-gray-400 line-through">${{ item.originalPrice }}</p> -->
       </div>
       <div class="p-4">
