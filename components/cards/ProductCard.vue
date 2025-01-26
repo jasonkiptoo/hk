@@ -53,12 +53,15 @@ import { useToast } from "primevue/usetoast";
 import { ref } from "vue";
 import { useNuxtApp } from "nuxt/app";
 import { useUserStore } from "@/stores/auth";
+import { useProductStore } from '@/stores/productStore';
 
 const toast = useToast();
 const router = useRouter();
 const userStore = useUserStore();
 const { $axios } = useNuxtApp();
 const { $formatPrice } = useNuxtApp()
+
+const productStore = useProductStore()
 
 defineProps({
   item: {
@@ -115,41 +118,69 @@ function isInWishlist(productId) {
   return wishList.value.includes(productId);
 }
 
-const wishProduct = async productId => {
 
+const wishProduct = async (productId) => {
+  const productStore = useProductStore(); // Access the store
+  // const userStore = useProductStore(); // Access the store
   try {
-    const product = { productId: productId };
-    const response = await $axios.post(`/product/wishlist/add`, product);
-    // Add product to local wishlist if successful
-    if (!wishList.value.includes(productId)) {
-      wishList.value.push(productId);
+    // Check if the user is logged in or not
+    // const isLoggedIn = /* check if the user is logged in (for example, check token or auth state) */;
+
+    // If the user is logged in
+    if (userStore.isLoggedIn) {
+
+      // if (isLoggedIn) {
+      // Check if the product is already in the wishlist
+      // if (!productStore.wishListItems.some(item => item.id === productId)) {
+      await productStore.addToWishlist(productId);  // Add product to wishlist
+      // } else {
+      //   // Remove product from wishlist if already in the list (optional behavior)
+      //   await productStore.removeFromWishlist(productId);
+      // }
+
+      // Update wishlist data from the store
+      await productStore.getWishList();
     } else {
-      wishList.value.pop(productId);
-    }
-    emit("wishlist-updated");
+      // If the user is not logged in, save wishlist to localStorage
+      const localWishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
 
-    toast.add({
-      severity: "success",
-      summary: response.data.message,
-      group: "br",
-      life: 3000,
-    });
+      // If the product is not in the local wishlist, add it
+      if (!localWishlist.some(item => item.id === productId)) {
+        localWishlist.push({ id: productId });
+        localStorage.setItem("wishlist", JSON.stringify(localWishlist));
+
+        // Show toast message for saving locally
+        toast.add({
+          severity: "success",
+          summary: "Your Wishlist has been saved locally.",
+          group: "br",
+          life: 3000,
+        });
+      } else {
+        // Show message if the item is already in the local wishlist
+        toast.add({
+          severity: "info",
+          summary: "This product is already in your local wishlist.",
+          group: "br",
+          life: 3000,
+        });
+      }
+    }
   } catch (error) {
-    // Save wishlist to localStorage if user is not logged in
-    const localWishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
-    if (!localWishlist.includes(productId)) {
-      localWishlist.push(productId);
-      localStorage.setItem("wishlist", JSON.stringify(localWishlist));
-    }
+    console.error("Error processing wishlist:", error);
 
+    // Show error message
     toast.add({
-      severity: "success",
-      summary: "Your Wishlist has been saved locally.",
+      severity: "error",
+      summary: "An error occurred while managing your wishlist.",
+      detail: error.message,
       group: "br",
-      life: 3000,
+      life: 5000,
     });
   }
 };
+
+
 
 const goToProductPage = product => {
   router.push({

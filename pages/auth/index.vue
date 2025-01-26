@@ -1,8 +1,6 @@
 <template>
   <div class=" " style="background-color: white;">
     <SignupForm v-if="isSignup" @toggle="toggleForm" @show-questionnaire="showQuestionnaire" />
-    <!-- <LoginForm v-else @toggle="toggleForm" /> -->
-    <!-- @toggle-questionnaire="showQuestionnaire" -->
     <QuestionnaireForm v-else-if="showQuestionnaireVisible" />
     <LoginForm v-else @toggle="toggleForm" />
   </div>
@@ -28,12 +26,11 @@ export default {
   methods: {
     toggleForm() {
       this.isSignup = !this.isSignup;
-      this.showQuestionnaireVisible = false; // Reset when switching forms
+      this.showQuestionnaireVisible = false;
     },
     showQuestionnaire() {
-      console.log("cds");
-      this.isSignup = false; // Show the questionnaire form when the event is emitted
-      this.showQuestionnaireVisible = true; // Show the questionnaire form when the event is emitted
+      this.isSignup = false;
+      this.showQuestionnaireVisible = true;
     },
   },
 };

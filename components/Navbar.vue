@@ -172,44 +172,42 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch, computed } from "vue";
 import { useRouter } from "vue-router";
 import { useNuxtApp } from "nuxt/app";
-import { defineEmits } from "vue";
 import { useUserStore } from "@/stores/auth";
+// import { useProductStore } from "@/stores/auth";
+import { useProductStore } from "@/stores/productStore";
+
+
+// Define props
+const props = defineProps({
+  refresh: {
+    type: Boolean,
+    default: false,
+  },
+});
+
+watch(
+  () => props.refresh,
+  (newVal) => {
+    if (newVal) {
+      console.log("Navbar refreshed");
+      // Add logic to refresh data or update the UI
+    }
+  }
+);
+const productStore = useProductStore()
 
 const userStore = useUserStore();
 const searchTerm = ref(""); // Stores the search term
 const selectedCategory = ref("");
 const menuOpen = ref(false);
-const categories = ref([
-  {
-    name: "HD ANALOGUE CAMERAS AND DVR",
-    icon: "/assets/icons/cctv.svg",
-  },
-  {
-    name: "IP NETWORK CAMERAS AND NVR",
-    icon: "network",
-  },
-  {
-    name: "ACCESS CONTROL PRODUCTS",
-    icon: "lock",
-  },
-  {
-    name: "VIDEO INTERCOM PRODUCTS",
-    icon: "phone",
-  },
-  {
-    name: "MONITOR DISPLAY PRODUCTS",
-    icon: "monitor",
-  },
-  {
-    name: "ACCESSORIES PRODUCTS",
-    icon: "toolbox",
-  },
-]);
-const wishListCount = ref(0);
-const cartCount = ref(0);
+const categories = ref([]);
+const cartCount = computed(() => productStore.cartCount);
+
+// Reactive wishlist count using computed
+const wishListCount = computed(() => productStore.wishListCount);
 const router = useRouter();
 
 const fetchCat = async () => {
@@ -227,7 +225,7 @@ const routeTo = () => {
   // const userStore = useUserStore();
 };
 
-const emit = defineEmits(["update:searchTerm"]);
+const emit = defineEmits(["update:searchTerm", 'refresh']);
 
 const fetchProducts = async () => {
   emit("update:searchTerm", searchTerm.value);
@@ -255,7 +253,7 @@ const getCartItems = async () => {
   try {
     const { $axios } = useNuxtApp();
     const response = await $axios.get(`/product/cart`);
-    cartCount.value = response.data.length;
+    // cartCount.value = response.data.length;
     // Calculate cart total
     const defaultPrice = 100;
     cartItems.value = response.data.reduce((total, item) => {
@@ -265,12 +263,7 @@ const getCartItems = async () => {
     console.error("Error fetching cart items:", error);
   }
 };
-// const cartTotal = computed(() =>
-//   cartItems.value.reduce(
-//     (total, item) => total + item.product.price * item.quantity,
-//     0
-//   )
-// );
+
 // check if user is logged in
 const checkUserLoggedIn = async () => {
   // Check if the user is logged in by verifying if the token exists
@@ -286,7 +279,7 @@ const checkUserLoggedIn = async () => {
       // Ensure wishId is an array and has a length
       if (Array.isArray(wishId) && wishId.length > 0) {
         for (let i = 0; i < wishId.length; i++) {
-          wishProduct(wishId[i]); // Call wishProduct with each ID
+          // wishProduct(wishId[i]); // Call wishProduct with each ID
         }
         localStorage.removeItem("wishlist"); // Clear wishlist from localStorage
       } else {
@@ -313,7 +306,7 @@ const getWishList = async () => {
   try {
     const { $axios } = useNuxtApp();
     const response = await $axios.get("/product/wishlist");
-    wishListCount.value = response.data.length;
+    // wishListCount.value = response.data.length;
   } catch (error) {
     console.error("Error fetching wishlist:", error);
     const localWishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
@@ -326,46 +319,22 @@ const wishProduct = async productId => {
     const product = { productId: productId };
     const response = await $axios.post(`/product/wishlist/add`, product);
 
-    // Add product to local wishlist if successful
-    if (!wishList.value.includes(productId)) {
-      wishList.value.push(productId);
-    }
-
     console.log("Done", response);
-    toast.add({
-      severity: "success",
-      summary: "Success",
-      detail: "Product added to wishlist",
-      group: "br",
-      life: 3000,
-    });
   } catch (error) {
     console.error("Error adding product to wishlist:", error);
-
-    // Save wishlist to localStorage if user is not logged in
-    const localWishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
-    if (!localWishlist.includes(productId)) {
-      localWishlist.push(productId);
-      localStorage.setItem("wishlist", JSON.stringify(localWishlist));
-    }
-
-    toast.add({
-      severity: "error",
-      summary: "Error",
-      detail: "Your Wishlist has been saved locally.",
-      group: "br",
-      life: 3000,
-    });
   }
 };
 // Fetch the data on component mount
 onMounted(async () => {
+  await productStore.getCartItems();
+  await productStore.getWishList();
   await checkUserLoggedIn();
   await getCartItems();
   await getWishList();
   await fetchCat();
 });
 </script>
+
 
 <style>
 @media (min-width: 768px) {

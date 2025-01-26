@@ -81,63 +81,7 @@
       </div>
       <div class="flex">
         <!-- Left Section -->
-        <div class="w-1/4 px-4">
-          <Card>
-            <template #title>Apply Filters</template>
-            <template #content>
-              <div v-for="(filter, index) in filters" :key="index" class="mb-6">
-                <h4 class="font-medium mb-2">{{ filter.label }}</h4>
-                <div v-if="filter.type === 'checkbox'" class="space-y-2">
-
-                  <div v-for="option in filter.options" :key="option" class="flex items-center">
-                    <Checkbox v-model="filter.selected" :value="option" class="mr-2" />
-                    <label :for="option">{{ option }}</label>
-                  </div>
-                </div>
-
-                <div v-if="filter.type === 'range'" class="space-y-2">
-
-                  <div class="w-56">
-                    <div class="flex gap-2">
-                      <!-- Bind the inputs to the slider values -->
-                      <input type="number" v-model="filter.range.values[0]" placeholder="Min."
-                        class="w-full border rounded-md p-2" />
-                      <input type="number" v-model="filter.range.values[1]" placeholder="Max."
-                        class="w-full border rounded-md p-2" />
-                    </div>
-
-                    <!-- Bind the slider to the range values -->
-                    <Slider v-model="filter.range.values" range class="w-56 mt-3 pt-2" :min="0" :max="1000" :step="1" />
-                  </div>
-
-
-                  <button @click="applyRangeFilter(filter)" class="bg-blue-500 text-white px-4 py-2 rounded-md mt-2">
-                    OK
-                  </button>
-                </div>
-              </div>
-            </template>
-          </Card>
-          <!-- <Card class="shadow-lg border rounded-md">
-            <h3 class="text-lg font-bold mb-4">Filters</h3>
-            <div v-for="(filter, index) in filters" :key="index" class="mb-6">
-              <h4 class="font-medium mb-2">{{ filter.label }}</h4>
-              <div v-if="filter.type === 'checkbox'" class="space-y-1">
-                <Checkbox v-for="option in filter.options" :key="option" v-model="filter.selected" :value="option"
-                  :label="option" />
-              </div>
-              <div v-if="filter.type === 'range'" class="space-y-2">
-                <input type="number" v-model="filter.range.min" placeholder="Min."
-                  class="w-full border rounded-md p-2" />
-                <input type="number" v-model="filter.range.max" placeholder="Max."
-                  class="w-full border rounded-md p-2" />
-                <button @click="applyRangeFilter(filter)" class="bg-blue-500 text-white px-4 py-2 rounded-md mt-2">
-                  OK
-                </button>
-              </div>
-            </div>
-          </Card> -->
-        </div>
+        <FilterCard />
         <!-- Right Section -->
         <div class="w-3/4">
           <div v-if="products.length > 0" class="grid gap-3 grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4">
@@ -165,11 +109,12 @@ import CategoryCard from "~/components/cards/CategoryCard.vue";
 import ProductCard from "~/components/cards/ProductCard.vue";
 import TopCard from "~/components/cards/TopCard1.vue";
 import Footer from "~/components/shared/utils/Footer.vue";
-import Card from 'primevue/card';
+import FilterCard from "~/components/cards/FilterCard.vue";
+
 
 export default {
   name: "Dashboard",
-  components: { FlashCard, CategoryCard, ProductCard, TopCard, Footer },
+  components: { FlashCard, CategoryCard, ProductCard, TopCard, Footer, FilterCard },
   props: {
     searchTerm: {
       type: String,
@@ -195,6 +140,9 @@ export default {
       // ProductService.getProductsSmall().then((data) => (products.value = data.slice(0, 9)));
       //  timer.value = setInterval(updateTime(), 1000);
     });
+    // const emit = defineEmits(["refresh"]);
+
+
     const value = ref([20, 80]);
     const fetching = ref(false)
     const timeLeft = ref({
@@ -257,32 +205,7 @@ export default {
         description: "Reliable access control systems for secure environments.",
       },
     ]);
-    const categories = ref([
-      {
-        name: "HD ANALOGUE CAMERAS AND DVR",
-        icon: "/assets/icons/cctv.svg",
-      },
-      {
-        name: "IP NETWORK CAMERAS AND NVR",
-        icon: "network",
-      },
-      {
-        name: "ACCESS CONTROL PRODUCTS",
-        icon: "lock",
-      },
-      {
-        name: "VIDEO INTERCOM PRODUCTS",
-        icon: "phone",
-      },
-      {
-        name: "MONITOR DISPLAY PRODUCTS",
-        icon: "monitor",
-      },
-      {
-        name: "ACCESSORIES PRODUCTS",
-        icon: "toolbox",
-      },
-    ]);
+    const categories = ref([]);
     const { $axios } = useNuxtApp();
     const products = ref([]);
     const currentIndex = ref(0);
@@ -294,7 +217,8 @@ export default {
         (currentIndex.value - 1 + images.value.length) % images.value.length;
     };
     const handleWish = () => {
-      console.log("handle");
+      console.log("Wishlist updated");
+      emit("refreshNavbar");
     };
 
     const getItems = x => {
@@ -409,59 +333,10 @@ export default {
           return null;
       }
     };
-    const filters = ref([
-      {
-        label: "Resolution",
-        type: "checkbox",
-        options: ["720p", "1080p", "4K"],
-        selected: [],
-      },
-      {
-        label: "Price",
-        type: "range",
-        range: {
-          values: [100, 500], // Default slider values [min, max]
-        },
-      },
-      {
-        label: "Special Features",
-        type: "checkbox",
-        options: [
-          "Night Vision",
-          "Motion Detection",
-          "Two-way Audio",
-          "Face Detection",
-          "Waterproof",
-          "Pan-Tilt",
-          "Face Recognition",
-          "Built-in Siren",
-          "One-way Audio",
-          "Human Motion Tracking",
-          "Sound Detection",
-          "Vandal-proof",
-          "Finger Recognition",
-          "People Counting",
-          "Temperature Measurement",
-        ],
-        selected: [],
-      },
-      {
-        label: "Type",
-        type: "checkbox",
-        options: [
-          "IP Camera",
-          "Dome Camera",
-          "Bullet Camera",
-          "Analog Camera",
-          "PTZ Camera",
-        ],
-        selected: [],
-      },
-    ]);
+
 
     return {
       images,
-      filters,
       currentIndex,
       nextSlide,
       prevSlide,

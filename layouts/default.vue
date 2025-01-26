@@ -1,7 +1,7 @@
 <template>
   <div class="sticky top-0 bg-cover bg-center h-200]" style="background-image: url('/images/bg.jpg');">
-    <Navbar @update:searchTerm="handleSearchUpdate" />
-    <NuxtPage :search-term="searchTerm" />
+    <Navbar @update:searchTerm="handleSearchUpdate" :refresh="refresh" />
+    <NuxtPage :search-term="searchTerm" @refreshNavbar="handleRefresh" />
   </div>
 </template>
 
@@ -18,6 +18,7 @@ export default {
   setup() {
     const searchTerm = ref("");
     const userStore = useUserStore();
+    const refresh = ref(false);
 
     // Check if the user is logged in (optional)
     // console.log("Is logged in:", userStore.isLoggedIn);
@@ -25,8 +26,13 @@ export default {
     const handleSearchUpdate = (value) => {
       searchTerm.value = value;
     };
+    const handleRefresh = () => {
+      console.log("Refreshing Navbar...");
+      refresh.value = !refresh.value; // Toggle the refresh value
+    };
 
-    return { searchTerm, handleSearchUpdate };
+
+    return { searchTerm, handleSearchUpdate, handleRefresh };
   },
 };
 </script>
