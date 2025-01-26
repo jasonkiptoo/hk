@@ -16,7 +16,7 @@
     <div class="mt-4" @click="goToProductPage(item)">
       <h3 class="font-bold text-lg">{{ item.name }}</h3>
       <div class="flex items-center space-x-2 mt-2">
-        <p class="text-red-500 font-bold">KES {{ item.defaultPrice | formatNumberWithCommas }}</p>
+        <p class="text-red-500 font-bold">KES {{ formattedPrice(item.defaultPrice) }}</p>
         <!-- <p class="text-gray-400 line-through">${{ item.originalPrice }}</p> -->
       </div>
       <div class="p-4">
@@ -58,6 +58,7 @@ const toast = useToast();
 const router = useRouter();
 const userStore = useUserStore();
 const { $axios } = useNuxtApp();
+const { $formatPrice } = useNuxtApp()
 
 defineProps({
   item: {
@@ -66,6 +67,9 @@ defineProps({
   },
 });
 
+const formattedPrice = (price) => {
+  return $formatPrice(price)
+}
 const emit = defineEmits(["wishlist-updated"]);
 
 // defineEmits(["wishlist-updated"]);

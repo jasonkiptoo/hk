@@ -19,7 +19,7 @@ export default defineNuxtConfig({
     "primeicons/primeicons.css", // PrimeIcons
     "@/assets/css/global.css",
   ],
-  plugins: ["~/plugins/axios", "~/plugins/initializeStore", "~/plugins/currency.js"],
+  plugins: ["~/plugins/axios", "~/plugins/initializeStore", "~/plugins/formatPrice.js"],
   modules: [
     "@nuxtjs/tailwindcss",
     "@pinia/nuxt",
