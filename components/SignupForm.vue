@@ -128,19 +128,13 @@ export default {
       try {
         const { $axios } = useNuxtApp();
         const userStore = useUserStore();
-
-        // Verify OTP with backend
         const { accessToken, user } = await userStore.verifyOtp(
           { email: this.form.email, otp: this.otp }
         );
-        console.log("User", user);
         if (accessToken) {
-          console.log("Otp success:", user);
-
           this.$router.push("/dashboard"); // Navigate to the dashboard upon success
         }
       } catch (error) {
-        console.error("Error verifying OTP:", error);
         this.$toast.add({
           severity: "error",
           summary: error.message,
@@ -149,6 +143,31 @@ export default {
         });
       }
     },
+    // async verifyOtp() {
+    //   try {
+    //     const { $axios } = useNuxtApp();
+    //     const userStore = useUserStore();
+
+    //     // Verify OTP with backend
+    //     const { accessToken, user } = await userStore.verifyOtp(
+    //       { email: this.form.email, otp: this.otp }
+    //     );
+    //     console.log("User", user);
+    //     if (accessToken) {
+    //       console.log("Otp success:", user);
+
+    //       this.$router.push("/dashboard"); // Navigate to the dashboard upon success
+    //     }
+    //   } catch (error) {
+    //     console.error("Error verifying OTP:", error);
+    //     this.$toast.add({
+    //       severity: "error",
+    //       summary: error.message,
+    //       group: "br",
+    //       life: 3000,
+    //     });
+    //   }
+    // },
 
     async fetchRoles() {
       const { $axios } = useNuxtApp();

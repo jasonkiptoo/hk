@@ -11,7 +11,7 @@
                 <form>
                     <div class="form-group">
                         <label for="first-name">First Name*</label>
-                        <input type="text" id="first-name" placeholder="First Name" required />
+                        <input type="text" id="first-name" v-model="user.firstName" placeholder="First Name" required />
                     </div>
                     <div class="form-group">
                         <label for="company-name">Company Name</label>
@@ -31,17 +31,17 @@
                     </div>
                     <div class="form-group">
                         <label for="phone">Phone Number*</label>
-                        <input type="tel" id="phone" placeholder="Phone Number" required />
+                        <input type="tel" id="phone" v-model="user.phoneNumber" placeholder="Phone Number" required />
                     </div>
                     <div class="form-group">
                         <label for="email">Email Address*</label>
-                        <input type="email" id="email" placeholder="Email Address" required />
+                        <input type="email" id="email" v-model="user.email" placeholder="Email Address" required />
                     </div>
                 </form>
             </div>
 
             <!-- Cart Summary -->
-            <div class="cart-summary">
+            <div class="cart-summary card">
                 <h3>Cart Summary</h3>
 
                 <!-- Cart Items -->
@@ -49,16 +49,19 @@
                     <div v-for="item in cartItems" :key="item.id" class="cart-item">
                         <img :src="item.product.image || 'https://via.placeholder.com/80x80'" />
                         <p>{{ item.product.name }}</p>
-                        <p>KES {{ (item.product.price * item.quantity).toFixed(2) }}</p>
+                        <p>KES {{ (item.product.defaultPrice * item.quantity).toFixed(2) }}</p>
                     </div>
                 </div>
 
                 <!-- Bottom Section -->
                 <div class="cart-summary-bottom">
-                    <p>Subtotal: <strong>KES {{ cartTotal.toFixed(2) }}</strong></p>
-                    <p>Shipping: <strong>Free</strong></p>
+                    <p>Subtotal<strong><span class="flex align-center justify-end"> {{ formattedPrice(cartTotal)
+                                }}</span></strong>
+                    </p>
                     <hr />
-                    <p>Total: <strong>KES {{ cartTotal.toFixed(2) }}</strong></p>
+                    <p>Total <strong> <span class="flex justify-end">
+                                KES {{ formattedPrice(cartTotal) }}
+                            </span></strong></p>
 
                     <!-- Payment Methods -->
                     <div class="payment-methods">
@@ -71,7 +74,7 @@
                     </div>
 
                     <!-- Place Order Button -->
-                    <button class="place-order-btn" @click="placeOrder">Place Order</button>
+                    <button class="place-order-btn" @click="placeOrder()">Place Order</button>
                 </div>
             </div>
 
@@ -81,29 +84,23 @@
 
 <script>
 import { ref, computed, onMounted } from "vue";
+import { useProductStore } from "@/stores/productStore";
+import { useUserStore } from "@/stores/auth";
 
 export default {
     setup() {
-        const cartItems = ref([
-            {
-                id: 1,
-                product: {
-                    name: "LCD Monitor",
-                    price: 650,
-                    image: "https://via.placeholder.com/80x80",
-                },
-                quantity: 1,
-            },
-            {
-                id: 2,
-                product: {
-                    name: "H1 Gamepad",
-                    price: 550,
-                    image: "https://via.placeholder.com/80x80",
-                },
-                quantity: 2,
-            },
-        ]);
+        const { $formatPrice } = useNuxtApp()
+        const userStore = useUserStore(); // Use the user store
+        const productStore = useProductStore(); // Use the product store
+        const cartTotal = computed(() => productStore.cartTotal);
+        const cartItems = computed(() => productStore.cartItems);
+        // const $formatPrice = useNuxtApp()
+        // Pre-fill user details from the store
+        const user = computed(() => userStore.user || { firstName: "", phoneNumber: "", email: "" });
+
+        const formattedPrice = (price) => {
+            return $formatPrice(price);
+        };
 
         const getCartItems = async () => {
             try {
@@ -116,20 +113,15 @@ export default {
                     product: {
                         ...item.product,
                         price: 100, // Map or replace with actual API price if available
-                        image: "https://via.placeholder.com/80x80" // map this 
+                        image: "https://via.placeholder.com/80x80", // map this
                     },
                 }));
             } catch (error) {
                 console.error("Error fetching cart items:", error);
             }
-        }
+        };
+
         const coupon = ref("");
-        const cartTotal = computed(() =>
-            cartItems.value.reduce(
-                (total, item) => total + item.product.price * item.quantity,
-                0
-            )
-        );
 
         const applyCoupon = () => {
             if (coupon.value === "DISCOUNT10") {
@@ -142,21 +134,23 @@ export default {
             }
         };
 
-        const placeOrder = () => {
-            alert("Order placed successfully!");
+        const placeOrder = async () => {
+            console.log("cart", cartItems.value)
+            await productStore.placeOrder();
         };
-
 
         onMounted(() => {
             getCartItems();
         });
 
         return {
+            user,
             cartItems,
             cartTotal,
             coupon,
             applyCoupon,
             placeOrder,
+            formattedPrice,
         };
     },
 };

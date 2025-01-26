@@ -139,8 +139,39 @@ async addToWishlist(productId) {
       } catch (error) {
         console.error("Error removing from wishlist:", error);
       }
-    }
-  },
+    },
+    // Place an order
+    async placeOrder() {
+        try {
+          const { $axios } = useNuxtApp();
+          
+          // Prepare order payload
+          const orderData = {
+            products: this.cartItems.map(item => ({
+              productModelId: item.product.id, 
+              quantity: item.quantity
+            }))
+          };
+  
+          // Send POST request to place the order
+          const response = await $axios.post("/product/orders", orderData);
+          
+          // Handle response after placing the order
+          if (response.data.success) {
+            console.log("Order placed successfully:", response.data);
+            // Clear cart items after successful order placement
+            this.cartItems = [];
+            this.cartCount = 0;
+            this.cartTotal = 0;
+          } else {
+            console.error("Failed to place order:", response.data);
+          }
+  
+        } catch (error) {
+          console.error("Error placing order:", error);
+        }
+      }
+    },
 
   getters: {
     // Getter for cart item count

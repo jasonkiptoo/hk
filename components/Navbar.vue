@@ -163,7 +163,7 @@
       <div class="ml-4 hidden sm:flex flex-col font-bold">
         <span class="text-xs text-gray-400">Your Cart</span>
         <span>KES {{ formattedPrice(cartTotal) }}</span>
-        <button @click="updateLocation">{{ location }}</button>
+        <!-- <button @click="updateLocation">{{ location }}</button> -->
       </div>
     </div>
 
@@ -182,21 +182,21 @@ import { useProductStore } from "@/stores/productStore";
 
 // Define props
 const props = defineProps({
-  refresh: {
-    type: Boolean,
-    default: false,
-  },
+  // refresh: {
+  //   type: Boolean,
+  //   default: false,
+  // },
 });
 
-watch(
-  () => props.refresh,
-  (newVal) => {
-    if (newVal) {
-      console.log("Navbar refreshed");
-      // Add logic to refresh data or update the UI
-    }
-  }
-);
+// watch(
+//   () => props.refresh,
+//   (newVal) => {
+//     if (newVal) {
+//       console.log("Navbar refreshed");
+//       // Add logic to refresh data or update the UI
+//     }
+//   }
+// );
 const productStore = useProductStore()
 
 const userStore = useUserStore();
@@ -230,7 +230,7 @@ const routeTo = () => {
   // const userStore = useUserStore();
 };
 
-const emit = defineEmits(["update:searchTerm", 'refresh']);
+const emit = defineEmits(["update:searchTerm"]);
 
 const fetchProducts = async () => {
   emit("update:searchTerm", searchTerm.value);

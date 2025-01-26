@@ -4,6 +4,7 @@ export const useUserStore = defineStore('user', {
   state: () => ({
     user: null, // Holds user data
     token: null, // Holds the authentication token
+    refreshToken: null, // Holds the refresh token
   }),
 
   actions: {
@@ -12,26 +13,49 @@ export const useUserStore = defineStore('user', {
         const { $axios } = useNuxtApp();
 
         const response = await $axios.post("/user/login", { email, password });
-
-        console.log(response)
-        const { accessToken, user } = response.data;
+        const { accessToken, user, refreshToken } = response.data;
 
         if (accessToken && user) {
           this.user = user;
           this.token = accessToken;
+          this.refreshToken = refreshToken;
           // console.log(token,"token")
 
           return { accessToken, user };
         } else {
-          console.log(response, "ter")
           throw new Error("Invalid login credentials.");
         }
       } catch (error) {
-        console.log(error, "err")
-
         throw new Error(error.response?.data?.error?.message || "Login failed.");
       }
     },
+
+    // Function to refresh the access token using the refresh token
+async  refreshAccessToken() {
+  // const refreshToken = localStorage.getItem('refreshToken');
+  // const userId = localStorage.getItem('userId');
+  
+  if (!refreshToken || !user) {
+    console.error("No refresh token or user ID found.");
+    return;
+  }
+  const { $axios } = useNuxtApp();
+
+
+  try {
+    const response = $axios.post('/auth/refresh', {
+        id: user.id,
+        refreshToken: refreshToken})
+    
+        const { accessToken, user, refreshToken } = response.data;
+
+        console.log(response.data)
+this.token =accessToken
+
+  } catch (error) {
+    console.error("Error refreshing token:", error);
+  }
+},
 
     async register({ email, password, phoneNumber, lastName, firstName, roleId }) {
       try {
