@@ -2,14 +2,20 @@ import Aura from "@primevue/themes/aura";
 import Lara from "@primevue/themes/lara";
 
 export default defineNuxtConfig({
+  app: {
+    head: {
+      title: "Hk Secure ",
+      link: [
+        { rel: 'icon', type: 'image/png', href: '/logo.png' } // Your custom logo as favicon
+      ]
+    }
+  },
   runtimeConfig: {
     public: {
       apiBase: "http://localhost:4500/api",
     },
   },
   css: [
-    //   'primevue/resources/themes/lara-light-indigo/theme.css', // Theme CSS
-    //   'primevue/resources/primevue.min.css', // Core PrimeVue styles
     "primeicons/primeicons.css", // PrimeIcons
     "@/assets/css/global.css",
   ],
