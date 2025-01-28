@@ -9,7 +9,7 @@
         <h1 class="text-4xl font-bold mb-4">HD Bullet Camera </h1>
         <p class="text-gray-500 text-lg mb-6">Wide Angle </p>
         <div class="price flex items-center text-2xl font-semibold text-red-600 mb-4">
-          KES 1,800.99
+          {{ price }}
           <span class="line-through text-gray-400 text-lg ml-4">KES 2,860</span>
         </div>
         <div class="discount flex items-center mb-6">
@@ -89,8 +89,6 @@
 
     </div>
 
-
-
     <!-- Carousel Section -->
     <div class="carousel flex justify-center items-center mt-8 space-x-4">
       <button @click="prevImage" class="text-gray-600 hover:text-gray-800 px-3 py-2 bg-gray-100 rounded-full shadow-md">
@@ -106,17 +104,34 @@
         →
       </button>
     </div>
+
+    <div class="feature__wrap grid grid-cols-5 gap-2 m-12">
+      <div class="feature__item flex flex-col items-center text-center" v-for="(feature, index) in features"
+        :key="index">
+        <div class="icon">
+          <i :class="feature.icon" style="font-size: 2rem;color:#f44336"></i>
+        </div>
+        <div class="content mt-4">
+          <h3 class="text-lg font-semibold">{{ feature.title }}</h3>
+          <p class="text-sm text-gray-600">{{ feature.description }}</p>
+        </div>
+      </div>
+    </div>
+    <CardsHome />
   </div>
 </template>
 
 <script>
+import CardsHome from "~/components/cards/home.vue"
 definePageMeta({
   layout: 'landing'
 })
 export default {
   name: "ProductSection",
+  components: { CardsHome },
   data() {
     return {
+      price: "",
       images: [
         "https://html.themexriver.com/radios/assets/img/product/img_53.png",
         "https://html.themexriver.com/radios/assets/img/product/img_52.png",
@@ -148,6 +163,33 @@ export default {
           available: 80,
           sold: 25,
           image: "https://html.themexriver.com/radios/assets/img/product/img_54.png",
+        },
+      ],
+      features: [
+        {
+          icon: "pi pi-truck",
+          title: "Free Shipping",
+          description: "Free shipping over $100",
+        },
+        {
+          icon: "pi pi-lock",
+          title: "Payment Secure",
+          description: "Got 100% Payment Safe",
+        },
+        {
+          icon: "pi pi-whatsapp",
+          title: "Support 24/7",
+          description: "Top quality 24/7 Support",
+        },
+        {
+          icon: "pi pi-money-bill",
+          title: "100% Money Back",
+          description: "Customers Money Backs",
+        },
+        {
+          icon: "pi pi-thumbs-up",
+          title: "Quality Products",
+          description: "We Insure Product Quality",
         },
       ],
     };
@@ -191,5 +233,27 @@ export default {
 .product-section {
   /* background-color: #f9fafc; */
 
+}
+
+.feature__wrap {
+  padding: 1rem;
+}
+
+.feature__item {
+  border: 1px solid #e5e7eb;
+  /* Light gray border */
+  border-radius: 0.5rem;
+  /* Rounded corners */
+  padding: 1rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.feature__item:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.icon img {
+  max-width: 100%;
 }
 </style>
