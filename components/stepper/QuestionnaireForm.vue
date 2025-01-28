@@ -180,6 +180,20 @@
                                 <Button label="Submit" icon="pi pi-check" iconPos="right" @click="submitForm" />
                             </div>
                         </StepPanel>
+
+                        <StepPanel v-slot="{ activateCallback }" :value="4">
+                            <div class="flex flex-col gap-2 mx-auto" style="min-height: 16rem; max-width: 30rem">
+                                <div class="text-center mt-4 mb-4 text-xl font-semibold">Thank You Page
+                                    {{ responseMessage }}
+
+                                </div>
+                            </div>
+                            <div class="flex pt-6 justify-between">
+                                <Button label="Back" severity="secondary" icon="pi pi-arrow-left"
+                                    @click="activateCallback(2)" />
+                                <Button label="Submit" icon="pi pi-check" iconPos="right" @click="submitForm" />
+                            </div>
+                        </StepPanel>
                     </StepPanels>
                 </Stepper>
             </div>
@@ -192,6 +206,7 @@
 export default {
     data() {
         return {
+            responseMessage: {},
             activeStep: 1,
             businessName: '',
             phoneNumber: '',
@@ -242,8 +257,8 @@ export default {
         };
     },
     methods: {
-        submitForm() {
-            // Simulate an API call to submit the form data
+        async submitForm() {
+            // Prepare form data
             const formData = {
                 businessName: this.businessName,
                 phoneNumber: this.phoneNumber,
@@ -260,9 +275,28 @@ export default {
             };
 
             console.log('Form Data:', formData);
-            alert('Form Submitted!');
-            // Reset form fields
-            this.resetForm();
+
+            try {
+                // Make POST request to the backend API
+                const { $axios } = useNuxtApp();
+
+                const response = await $axios.post('/user/technician-questionnaire', formData);
+
+                // Handle success
+                this.responseMessage = response.data.message
+                this.activateCallback(4)
+                if (response.status === 200) {
+                    // alert('Form submitted successfully!');
+                }
+            } catch (error) {
+                // Handle error
+                console.error('Error submitting form:', error);
+                // alert('There was an error submitting the form. Please try again.');
+            } finally {
+                // Reset form fields after submission
+                // this.resetForm();
+
+            }
         },
         resetForm() {
             this.businessName = '';
