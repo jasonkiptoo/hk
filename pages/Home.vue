@@ -1,5 +1,5 @@
 <template>
-  <div class="product-section py-8 pt-36 px-40">
+  <div class="product-section pt-32">
     <div class="flex justify-center items-start">
       <!-- Left Section -->
       <div class="product-details w-1/3">
@@ -43,43 +43,50 @@
         </div>
       </div>
       <!-- Right Section -->
-      <div class="w-1/3 pa-6 ma-5  px-12">
-        <Carousel :autoplayInterval="3000" :value="products" :numVisible="1" :numScroll="1" orientation="horizontal"
-          containerClass="flex items-center" :showIndicators="false" :showNavigators="false">
-          <template #item="slotProps">
+      <div class="w-1/3 pa-6 ma-5 pl-40 h-40 dark:border-orange-600">
+        <div class="border border-red-600 dark:border-orange-600 rounded m-2 p-4">
+          <!-- Static Content -->
+          <div class="mb-4 font-medium text-dark-600 text-center">Top Product</div>
 
-            <div class="border border-red-600 dark:border-orange-600 rounded m-2 p-4">
-              <div class="mb-4 font-medium text-dark-600">Top Product</div>
-              <div class="mb-4">
-                <div class="relative mx-auto">
-                  <img :src="slotProps.data.image" :alt="slotProps.data.name" class="w-full h-66 object-cover rounded"
-                    style="max-width: 100%;" />
-                  <Tag :value="slotProps.data.inventoryStatus" :severity="getSeverity(slotProps.data.inventoryStatus)"
-                    class="absolute" style="left:5px; top: 5px" />
+          <!-- Carousel for Dynamic Content -->
+          <Carousel :d_circular="true" :autoplayInterval="3000" :value="products" :numVisible="1" :numScroll="1"
+            orientation="horizontal" containerClass="flex items-center" :showIndicators="false" :showNavigators="false">
+            <template #item="slotProps">
+              <!-- Dynamic Content -->
+              <div>
+                <div class="mb-4">
+                  <div class="relative mx-auto">
+                    <img :src="slotProps.data.image" :alt="slotProps.data.name" class="object-cover rounded"
+                      style="max-width: 100%;" />
+                    <Tag :value="slotProps.data.inventoryStatus" :severity="getSeverity(slotProps.data.inventoryStatus)"
+                      class="absolute" style="left:5px; top: 5px" />
+                  </div>
                 </div>
-              </div>
 
-              <div class="mb-4 font-medium  flex justify-around">{{ slotProps.data.name }}</div>
-              <div class="flex justify-between items-center  flex justify-around">
-                <div class="mt-0 font-semibold text-xl  flex justify-around py-4">{{ slotProps.data.price }}</div>
-              </div>
-              <div class="stock flex items-center text-sm text-gray-600 mb-6 flex justify-around">
-                <div class="w-full max-w-xs">
-                  <div class="relative">
-                    <div class="h-2 bg-gray-300 rounded">
-                      <div class="h-2 bg-orange-500 rounded" style="width: 65%"></div>
+                <div class="mb-4 font-medium flex justify-around">{{ slotProps.data.name }}</div>
+                <div class="flex justify-between items-center flex justify-around">
+                  <div class="mt-0 font-semibold text-xl flex justify-around py-4">{{ slotProps.data.price }}</div>
+                </div>
+
+                <div class="stock flex items-center text-sm text-gray-600 mb-6 flex justify-around">
+                  <div class="w-full max-w-xs">
+                    <div class="relative">
+                      <div class="h-2 bg-gray-300 rounded">
+                        <div class="h-2 bg-orange-500 rounded" style="width: 65%"></div>
+                      </div>
+                      <div class="flex justify-between text-xs mt-2">
+                        <span>Available: 334</span>
+                        <span>Stock: 180</span>
+                      </div>
                     </div>
                   </div>
-                  <div class="flex justify-between text-xs mt-2">
-                    <span>Available: 334</span>
-                    <span>Stock: 180</span>
-                  </div>
                 </div>
               </div>
-            </div>
-          </template>
-        </Carousel>
+            </template>
+          </Carousel>
+        </div>
       </div>
+
     </div>
 
 
@@ -103,6 +110,9 @@
 </template>
 
 <script>
+definePageMeta({
+  layout: 'landing'
+})
 export default {
   name: "ProductSection",
   data() {
@@ -179,6 +189,7 @@ export default {
 
 <style scoped>
 .product-section {
-  background-color: #f9fafc;
+  /* background-color: #f9fafc; */
+
 }
 </style>
