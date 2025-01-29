@@ -60,7 +60,7 @@
           class="border border-red-600 dark:border-orange-600 rounded m-2 p-4"
         >
           <!-- Static Content -->
-          <div class="mb-4 font-medium text-dark-600 text-center">
+          <div class="mb-4 border-b pb-2 font-medium text-dark-600 text-center">
             Top Product
           </div>
 
@@ -177,17 +177,19 @@
       </div>
     </div>
     <CardsHome />
+    <TopDeal />
   </div>
 </template>
 
 <script>
 import CardsHome from "~/components/cards/home.vue";
+import TopDeal from "~/components/cards/TopDeal.vue";
 definePageMeta({
   layout: "landing",
 });
 export default {
   name: "ProductSection",
-  components: { CardsHome },
+  components: { CardsHome, TopDeal },
   data() {
     return {
       price: "",
