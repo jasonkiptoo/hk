@@ -5,7 +5,6 @@
             <h2 class="text-lg font-bold">
                 Hot <span class="text-red-500">New Arrival</span> You May Like
             </h2>
-
             <!-- Tabs -->
             <div class="flex space-x-4 border-b">
                 <button v-for="tab in tabs" :key="tab" @click="selectedTab = tab" :class="[
