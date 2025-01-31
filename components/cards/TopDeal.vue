@@ -71,7 +71,6 @@
               <div class="flex items-center">
                 <img :src="item.image" class="w-28 h-28 object-cover rounded-md" />
                 <div class="ml-4 flex flex-col">
-                  <h3 class="text-lg font-medium">{{ item.name }}</h3>
                   <div class="flex items-center mt-1">
                     <span v-for="star in 5" :key="star" class="text-yellow-400">
                       <i :class="{
@@ -81,6 +80,7 @@
                     </span>
                     <span class="text-gray-500 ml-2">({{ item.reviews }})</span>
                   </div>
+                  <h3 class="text-lg font-medium">{{ item.name }}</h3>
                   <div class="mt-2 text-orange-500 font-bold text-lg">
                     <span class="line-through text-gray-400">${{ item.oldPrice }}</span>
                     <span class="ml-2">${{ item.price }}</span>
@@ -99,9 +99,8 @@
             <div v-for="item in featuredProducts.slice(2, 3)" :key="item.name"
               class="border rounded-sm p-4 shadow-sm h-full">
               <div class="flex flex-col items-center h-full">
-                <img :src="item.image" class="h- object-cover rounded-md" />
-                <div class="ml-4 flex flex-col">
-                  <h3 class="text-lg font-medium">{{ item.name }}</h3>
+                <img :src="item.image" class="object-cover rounded-md" />
+                <div class="text-center items-center pt-4 flex flex-col">
                   <div class="flex items-center mt-1">
                     <span v-for="star in 5" :key="star" class="text-yellow-400">
                       <i :class="{
@@ -111,6 +110,7 @@
                     </span>
                     <span class="text-gray-500 ml-2">({{ item.reviews }})</span>
                   </div>
+                  <h3 class="text-lg font-medium">{{ item.name }}</h3>
                   <div class="mt-2 text-orange-500 font-bold text-lg">
                     <span class="line-through text-gray-400">${{ item.oldPrice }}</span>
                     <span class="ml-2">${{ item.price }}</span>
@@ -131,7 +131,6 @@
               <div class="flex items-center">
                 <img :src="item.image" class="w-28 h-28 object-cover rounded-md" />
                 <div class="ml-4 flex flex-col">
-                  <h3 class="text-lg font-medium">{{ item.name }}</h3>
                   <div class="flex items-center mt-1">
                     <span v-for="star in 5" :key="star" class="text-yellow-400">
                       <i :class="{
@@ -141,6 +140,7 @@
                     </span>
                     <span class="text-gray-500 ml-2">({{ item.reviews }})</span>
                   </div>
+                  <h3 class="text-lg font-medium">{{ item.name }}</h3>
                   <div class="mt-2 text-orange-500 font-bold text-lg">
                     <span class="line-through text-gray-400">${{ item.oldPrice }}</span>
                     <span class="ml-2">${{ item.price }}</span>
