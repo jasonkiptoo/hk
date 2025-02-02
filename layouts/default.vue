@@ -1,10 +1,10 @@
 <template>
-  <div class="sticky top-0 bg-cover bg-center h-200]" style="background-image: url('/images/bg.jpg');">
+  <!-- style="background-image: url('/images/bg.jpg');" -->
+  <div class="sticky top-0 bg-cover bg-center h-200]">
     <Navbar @update:searchTerm="handleSearchUpdate" :refresh="refresh" />
     <NuxtPage :search-term="searchTerm" @refreshNavbar="handleRefresh" />
   </div>
 </template>
-
 
 <script>
 import { ref } from "vue";
@@ -23,14 +23,13 @@ export default {
     // Check if the user is logged in (optional)
     // console.log("Is logged in:", userStore.isLoggedIn);
 
-    const handleSearchUpdate = (value) => {
+    const handleSearchUpdate = value => {
       searchTerm.value = value;
     };
     const handleRefresh = () => {
       console.log("Refreshing Navbar...");
       refresh.value = !refresh.value; // Toggle the refresh value
     };
-
 
     return { searchTerm, handleSearchUpdate, handleRefresh };
   },

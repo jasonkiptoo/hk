@@ -8,7 +8,8 @@ export const useProductStore = defineStore('product', {
     cartCount: 0,       // Cart item count
     cartTotal: 0,       // Cart total amount
     wishListItems: [],  // Array to hold wishlist items
-    wishListCount: 0,   // Wishlist item count
+    wishListCount: 0,   
+    categories: [],   
   }),
 
   actions: {
@@ -29,6 +30,16 @@ export const useProductStore = defineStore('product', {
         console.error("Error fetching cart items:", error);
       }
     },
+      async getCategories() {
+      try {
+        const { $axios } = useNuxtApp();
+        const response = await $axios.get("/product/categories");
+        this.categories = response.data;  // Update the cart items
+      } catch (error) {
+        console.error("Error fetching cart items:", error);
+      }
+    },
+    
 
     // Add a product to the cart
     async addToCart(productId, quantity) {
@@ -182,6 +193,7 @@ async addToWishlist(productId) {
     
     // Getter for cart total value
     getCartTotal: (state) => state.cartTotal,
+    getCategoriesList: (state) => state.categories,
   },
 
   persist: {
