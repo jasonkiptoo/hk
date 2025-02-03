@@ -1,39 +1,72 @@
 <template>
-  <div class="border rounded-lg p-4 shadow hover:shadow-lg transition duration-200 cursor-pointer">
+  <div
+    class="border rounded-lg p-4 shadow hover:shadow-lg transition duration-200 cursor-pointer"
+  >
     <div class="relative">
-      <img :src="item.image" alt="Product Image" class="w-full h-40 object-cover rounded" />
-      <button class="absolute top-2 right-2" :class="isInWishlist(item.id)
-        ? 'text-red-500'
-        : 'text-gray-500 hover:text-red-500'
-        " @click="wishProduct(item.id)">
-        <svg xmlns="http://www.w3.org/2000/svg" :fill="isInWishlist(item.id) ? 'currentColor' : 'none'"
-          viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78L12 20.23l8.84-8.84a5.5 5.5 0 000-7.78z" />
+      <img
+        :src="item.image"
+        alt="Product Image"
+        class="w-full h-40 object-cover rounded"
+      />
+      <button
+        class="absolute top-2 right-2"
+        :class="
+          isInWishlist(item.id)
+            ? 'text-red-500'
+            : 'text-gray-500 hover:text-red-500'
+        "
+        @click="wishProduct(item.id)"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          :fill="isInWishlist(item.id) ? 'currentColor' : 'none'"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          class="w-6 h-6"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78L12 20.23l8.84-8.84a5.5 5.5 0 000-7.78z"
+          />
         </svg>
       </button>
     </div>
     <div class="mt-4">
-
       <div class="">
         <div class="flex justify-between items-center">
-          <div class="mt-0 font-semibold text-xl" @click="goToProductPage(item)">
+          <div
+            class="mt-0 font-semibold text-xl"
+            @click="goToProductPage(item)"
+          >
             <h3 class="font-bold text-lg">{{ item.name }}</h3>
-            <p class="text-red-500 font-bold space-x-2 mt-2">KES {{ formattedPrice(item.defaultPrice) }}</p>
-
+            <p class="text-red-500 font-bold space-x-2 mt-2">
+              KES {{ formattedPrice(item.price) }}
+            </p>
           </div>
           <span>
-            <Button icon="pi pi-shopping-cart" class="ml-" @click="addToCart(item)" />
+            <Button
+              icon="pi pi-shopping-cart"
+              class="ml-"
+              @click="addToCart(item)"
+            />
           </span>
         </div>
-
       </div>
       <div class="flex items-center mt-2">
         <div class="flex text-yellow-400">
           <template v-for="i in 5" :key="i">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" stroke="none"
-              class="w-4 h-4">
-              <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+              stroke="none"
+              class="w-4 h-4"
+            >
+              <path
+                d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"
+              />
             </svg>
           </template>
         </div>
@@ -50,16 +83,15 @@ import { useToast } from "primevue/usetoast";
 import { ref } from "vue";
 import { useNuxtApp } from "nuxt/app";
 import { useUserStore } from "@/stores/auth";
-import { useProductStore } from '@/stores/productStore';
+import { useProductStore } from "@/stores/productStore";
 
 const toast = useToast();
 const router = useRouter();
 const userStore = useUserStore();
 const { $axios } = useNuxtApp();
-const { $formatPrice } = useNuxtApp()
+const { $formatPrice } = useNuxtApp();
 
-const productStore = useProductStore()
-
+const productStore = useProductStore();
 
 defineProps({
   item: {
@@ -68,9 +100,9 @@ defineProps({
   },
 });
 
-const formattedPrice = (price) => {
-  return $formatPrice(price)
-}
+const formattedPrice = price => {
+  return $formatPrice(price);
+};
 const emit = defineEmits(["wishlist-updated"]);
 
 // defineEmits(["wishlist-updated"]);
@@ -115,16 +147,14 @@ const checkUserLoggedIn = async () => {
 };
 
 function isInWishlist(productId) {
-  let wish = wishList.value
+  let wish = wishList.value;
   if (Array.isArray(wish)) {
-    return wishList.value.some((item) => item === productId);
+    return wishList.value.some(item => item === productId);
   }
   return false;
 }
 
-
-
-const wishProduct = async (productId) => {
+const wishProduct = async productId => {
   console.log(productId, "Attempting to add to wishlist");
 
   const productStore = useProductStore(); // Access the store
@@ -142,13 +172,14 @@ const wishProduct = async (productId) => {
         group: "br",
         life: 3000,
       });
-    }
-    else {
+    } else {
       // Not logged in: Save to or remove from localStorage wishlist
       const localWishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
 
       // Check if the product is already in the local wishlist
-      const existingIndex = localWishlist.findIndex((item) => item.id === productId);
+      const existingIndex = localWishlist.findIndex(
+        item => item.id === productId
+      );
 
       if (existingIndex === -1) {
         // Product is not in the wishlist, add it
@@ -173,7 +204,6 @@ const wishProduct = async (productId) => {
           life: 3000,
         });
       }
-
     }
   } catch (error) {
     console.error("Error processing wishlist:", error);
@@ -188,10 +218,13 @@ const wishProduct = async (productId) => {
   }
 };
 
-const addToCart = async (product) => {
+const addToCart = async product => {
+  const userStore = useUserStore();
+
+  let user = userStore.user;
   try {
     const productStore = useProductStore(); // Access the store
-    const { response } = await productStore.addToCart(product.id, 1);
+    const { response } = await productStore.addToCart(product.id, 1, user.id);
 
     // Notify user on successful addition
     toast.add({
@@ -214,9 +247,8 @@ const addToCart = async (product) => {
   }
 };
 
-
-
 const goToProductPage = product => {
+  console.log("prodcet", product);
   router.push({
     path: `/products/${product.id}`,
   });

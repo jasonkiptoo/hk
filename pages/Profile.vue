@@ -4,16 +4,26 @@
       <div class="card flex">
         <Breadcrumb :home="home" :model="items">
           <template #item="{ item, props }">
-            <router-link v-if="item.route" v-slot="{ href, navigate }" :to="item.route" custom>
+            <router-link
+              v-if="item.route"
+              v-slot="{ href, navigate }"
+              :to="item.route"
+              custom
+            >
               <a :href="href" v-bind="props.action" @click="navigate">
                 <span :class="[item.icon, 'text-color']" />
                 <span class="text-primary font-semibold">{{ item.label }}</span>
               </a>
             </router-link>
-            <a v-else :href="item.url" :target="item.target" v-bind="props.action">
+            <a
+              v-else
+              :href="item.url"
+              :target="item.target"
+              v-bind="props.action"
+            >
               <span class="text-surface-700 dark:text-surface-0">{{
                 item.label
-                }}</span>
+              }}</span>
             </a>
           </template>
         </Breadcrumb>
@@ -30,14 +40,23 @@
           <li @click="activeSection = 'paymentOptions'" class="cursor-pointer">
             Payment Options
           </li>
-          <li @click="activeSection = 'orders'" class="font-bold text-red-500 mt-4 cursor-pointer">
+          <li
+            @click="activeSection = 'orders'"
+            class="font-bold text-red-500 mt-4 cursor-pointer"
+          >
             My Orders
           </li>
-          <li @click="activeSection = 'wishlist'" class="font-bold text-red-500 mt-4 cursor-pointer">
+          <li
+            @click="activeSection = 'wishlist'"
+            class="font-bold text-red-500 mt-4 cursor-pointer"
+          >
             My Wishlist
           </li>
         </ul>
-        <button @click="logout" class="bg-red-500 text-white px-4 py-2 rounded mt-12">
+        <button
+          @click="logout"
+          class="bg-red-500 text-white px-4 py-2 rounded mt-12"
+        >
           Logout
         </button>
       </aside>
@@ -51,22 +70,46 @@
             <div class="grid grid-cols-2 gap-4">
               <div>
                 <label>First Name</label>
-                <input type="text" v-model="user.firstName" class="border w-full p-2 mt-1" />
+                <input
+                  type="text"
+                  v-model="user.firstName"
+                  class="border w-full p-2 mt-1"
+                />
               </div>
               <div>
                 <label>Last Name</label>
-                <input type="text" v-model="user.lastName" class="border w-full p-2 mt-1" />
+                <input
+                  type="text"
+                  v-model="user.lastName"
+                  class="border w-full p-2 mt-1"
+                />
               </div>
               <div>
                 <label>Email</label>
-                <input type="email" v-model="user.email" class="border w-full p-2 mt-1" />
+                <input
+                  type="email"
+                  v-model="user.email"
+                  class="border w-full p-2 mt-1"
+                />
               </div>
             </div>
             <h3 class="mt-6 font-bold">Password Changes</h3>
             <div class="grid grid-cols-1 gap-4 mt-2">
-              <input type="password" placeholder="Current Password" class="border w-full p-2" />
-              <input type="password" placeholder="New Password" class="border w-full p-2" />
-              <input type="password" placeholder="Confirm New Password" class="border w-full p-2" />
+              <input
+                type="password"
+                placeholder="Current Password"
+                class="border w-full p-2"
+              />
+              <input
+                type="password"
+                placeholder="New Password"
+                class="border w-full p-2"
+              />
+              <input
+                type="password"
+                placeholder="Confirm New Password"
+                class="border w-full p-2"
+              />
             </div>
             <div class="flex justify-between mt-6">
               <button class="border px-4 py-2">Cancel</button>
@@ -78,19 +121,21 @@
         </div>
 
         <!-- Payment Options Section -->
-        <div v-if="activeSection === 'paymentOptions'">
-          <h2 class="text-xl font-bold mb-4 text-red-500">Payment Options</h2>
-          <p>Select your preferred payment method:</p>
+        <div v-if="activeSection === 'paymentOptions'" class="p-4">
+          <h2 class="text-xl font-bold mb-4 text-red-500">Payment Method</h2>
+          <!-- <p>Select your preferred payment method:</p> -->
           <div class="mt-4">
             <h3 class="font-bold mb-2">Mpesa</h3>
-            <p class="text-gray-600">Mobile Number: 0700 123 456</p>
+            <p class="text-gray-600">Mobile Number: {{ user.phoneNumber }}</p>
           </div>
         </div>
 
         <!-- Orders Section -->
         <div v-if="activeSection === 'orders'">
           <h2 class="text-xl font-bold mb-4 text-red-500">My Orders</h2>
-          <table class="table-auto w-full border-collapse border border-gray-200">
+          <table
+            class="table-auto w-full border-collapse border border-gray-200"
+          >
             <thead>
               <tr class="bg-gray-100">
                 <th class="border border-gray-300 px-4 py-2 text-left">
@@ -106,7 +151,11 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(order, index) in orders" :key="index" class="hover:bg-gray-50">
+              <tr
+                v-for="(order, index) in orders"
+                :key="index"
+                class="hover:bg-gray-50"
+              >
                 <td class="border border-gray-300 px-4 py-2">{{ order.id }}</td>
                 <td class="border border-gray-300 px-4 py-2">
                   {{ order.date }}
@@ -126,20 +175,33 @@
         <div v-if="activeSection === 'wishlist'" class="p-3">
           <h2 class="text-xl font-bold mb-4 text-red-500">My Wishlist</h2>
           <div class="grid grid-cols-4 gap-4">
-            <div v-for="(item, index) in wishlist" :key="index"
-              class="border p-4 rounded shadow hover:shadow-lg transition">
-              <img :src="item.image" alt="Wishlist Item" class="w-full h-40 object-cover rounded" />
+            <div
+              v-for="(item, index) in wishlist"
+              :key="index"
+              class="border p-4 rounded shadow hover:shadow-lg transition"
+            >
+              <img
+                :src="item.image"
+                alt="Wishlist Item"
+                class="w-full h-40 object-cover rounded"
+              />
               <h3 class="mt-2 text-sm font-semibold">
                 {{ item.product.name }}
               </h3>
               <p class="text-gray-500 text-xs">{{ item.description }}</p>
               <div class="flex gap-1">
-                <button :loading="loadingAdd" @click="addToCart(item.id)"
-                  class="bg-red-500 text-white px-3 py-1 mt-2 rounded text-sm w-3/4">
+                <button
+                  :loading="loadingAdd"
+                  @click="addToCart(item.id)"
+                  class="bg-red-500 text-white px-3 py-1 mt-2 rounded text-sm w-3/4"
+                >
                   Add to Cart
                 </button>
-                <button :loading="removeItem" @click="removeWish(item.id)"
-                  class="bg-black text-white px-3 py-1 mt-2 rounded text-sm w-1/4">
+                <button
+                  :loading="removeItem"
+                  @click="removeWish(item.id)"
+                  class="bg-black text-white px-3 py-1 mt-2 rounded text-sm w-1/4"
+                >
                   <i class="pi pi-trash"></i>
                 </button>
               </div>
@@ -206,7 +268,6 @@ export default {
 
   methods: {
     async removeWish(id) {
-      console.log("removeWish", id);
       const { $axios } = useNuxtApp();
       this.removeItem = true;
       // setTimeout(() => {

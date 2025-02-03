@@ -10,6 +10,9 @@ export const useProductStore = defineStore('product', {
     wishListItems: [],  // Array to hold wishlist items
     wishListCount: 0,   
     categories: [],   
+    products: [],   
+    orders: [],   
+
   }),
 
   actions: {
@@ -24,8 +27,17 @@ export const useProductStore = defineStore('product', {
         console.log(response.data)
 
         // Calculate the cart total (assuming each product has a price property)
-        this.cartTotal = response.data.reduce((total, item) => total + (item.quantity * item.product.defaultPrice), 0);
-        console.log(this.cartTotal, "cacsad")
+        this.cartTotal = response.data.reduce((total, item) => total + (item.quantity * item.productModel.price), 0);
+      } catch (error) {
+        console.error("Error fetching cart items:", error);
+      }
+    },
+     async getProducts() {
+      try {
+        const { $axios } = useNuxtApp();
+        const response = await $axios.get("/product");
+        console.log(response.data,  "products")
+        this.products = response.data;  // Update the cart items
       } catch (error) {
         console.error("Error fetching cart items:", error);
       }
@@ -42,14 +54,28 @@ export const useProductStore = defineStore('product', {
     
 
     // Add a product to the cart
-    async addToCart(productId, quantity) {
+    async addToCart(productModelId, quantity, userId) {
       try {
         const { $axios } = useNuxtApp();
-        const response = await $axios.post("/product/cart/add", { productId, quantity });
+        const response = await $axios.post("/product/cart/add", { productModelId, quantity, userId });
         // this.cartItems.push(response.data);
 
        await this.getCartItems()
         this.cartCount = this.cartItems.length;
+        // this.cartTotal += (quantity * response.data.price);
+        return { response }; 
+      } catch (error) {
+        
+        console.error("Error adding to cart:", error);
+      }
+    },
+     async getOrders(productModelId, quantity) {
+      try {
+        const { $axios } = useNuxtApp();
+        const response = await $axios.post("/product/orders");
+        // this.cartItems.push(response.data);
+
+        this.orders = response.data;
         // this.cartTotal += (quantity * response.data.price);
         return { response }; 
       } catch (error) {
@@ -98,10 +124,10 @@ export const useProductStore = defineStore('product', {
 
 // Add a product to the wishlist
 // Add a product to the wishlist
-async addToWishlist(productId) {
+async addToWishlist(productModelId) {
     try {
       const { $axios } = useNuxtApp();
-      const product = { productId };
+      const product = { productModelId };
   
       // Send a POST request to the API
       const res = await $axios.post("/product/wishlist/add", product);
@@ -194,6 +220,8 @@ async addToWishlist(productId) {
     // Getter for cart total value
     getCartTotal: (state) => state.cartTotal,
     getCategoriesList: (state) => state.categories,
+    getProductList: (state) => state.products,
+    getOrdersList: (state) => state.orders,
   },
 
   persist: {

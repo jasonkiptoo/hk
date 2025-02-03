@@ -29,9 +29,11 @@
           </button>
         </div>
         <div class="p-4">
-          <h3 class="text-lg font-semibold">{{ item.name }}</h3>
+          <h3 class="text-lg font-semibold">{{ item.productModel.name }}</h3>
           <p class="text-gray-500 mb-2">
-            <span class="text-red-500 font-bold">${{ item.price }}</span>
+            <span class="text-red-500 font-bold"
+              >KES {{ formattedPrice(item.productModel.price) }}</span
+            >
             <span
               v-if="item.originalPrice"
               class="line-through text-sm ml-2 text-gray-400"
@@ -60,6 +62,8 @@
 </template>
 
 <script>
+import { useProductStore } from "@/stores/productStore";
+import { useUserStore } from "@/stores/auth";
 export default {
   mounted() {
     this.getWishList();
@@ -70,11 +74,46 @@ export default {
     };
   },
   methods: {
+    formattedPrice(price) {
+      const { $formatPrice } = useNuxtApp();
+      return $formatPrice(price);
+    },
     removeFromWishlist(index) {
       this.wishlist.splice(index, 1);
     },
-    addToCart(item) {
-      alert(`Added ${item.name} to the cart!`);
+    async addToCart(product) {
+      console.log("cdscs", product);
+      const userStore = useUserStore();
+
+      let user = userStore.user;
+      try {
+        const productStore = useProductStore(); // Access the store
+        const { response } = await productStore.addToCart(
+          product.productModelId,
+          1,
+          user.id
+        );
+
+        // Notify user on successful addition
+        toast.add({
+          severity: "success",
+          summary: "Product Added to Cart",
+          group: "br",
+          life: 3000,
+        });
+
+        console.log(response);
+      } catch (error) {
+        // Handle errors and show appropriate toast messages
+        toast.add({
+          severity: "error",
+          summary: "Failed to Add Product",
+          detail: error.message,
+          group: "br",
+          life: 5000,
+        });
+      }
+      // alert(`Added ${item.name} to the cart!`);
     },
     moveAllToCart() {
       alert("All items have been moved to the cart!");

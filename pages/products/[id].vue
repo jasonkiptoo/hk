@@ -8,19 +8,31 @@
       <!-- Product Images Section -->
       <div class="flex flex-col items-center">
         <!-- Main Image -->
-        <img :src="product.image" alt="Product Image" class="w-full h-full object-cover mb-4 border rounded-lg" />
+        <img
+          :src="product.image"
+          alt="Product Image"
+          class="w-full h-full object-cover mb-4 border rounded-lg"
+        />
 
         <!-- Thumbnails -->
         <div class="grid grid-cols-5 gap-2">
-          <img v-for="(img, index) in product.images" :key="index" :src="img" alt="Thumbnail" @click="setMainImage(img)"
-            class="w-16 h-16 object-cover border rounded-lg cursor-pointer hover:border-gray-500" />
+          <img
+            v-for="(img, index) in product.images"
+            :key="index"
+            :src="img"
+            alt="Thumbnail"
+            @click="setMainImage(img)"
+            class="w-16 h-16 object-cover border rounded-lg cursor-pointer hover:border-gray-500"
+          />
         </div>
       </div>
 
       <!-- Product Info Section -->
       <div class="flex flex-col space-y-4">
         <h2 class="text-3xl font-bold">{{ product.name }}</h2>
-        <p class="text-lg text-gray-700 font-medium">KES {{ formattedPrice(product.defaultPrice) }}</p>
+        <p class="text-lg text-gray-700 font-medium">
+          KES {{ formattedPrice(product.price) }}
+        </p>
         <p class="text-gray-600 leading-relaxed">
           <!-- {{ product.features.map(feature => feature.description).join(", ") }} -->
         </p>
@@ -28,8 +40,12 @@
         <!-- Colors -->
         <div class="flex items-center space-x-4">
           <span class="font-medium">Colors:</span>
-          <div v-for="(color, index) in product.colors" :key="index" :style="{ backgroundColor: color }"
-            class="w-6 h-6 rounded-full border border-gray-300 cursor-pointer"></div>
+          <div
+            v-for="(color, index) in product.colors"
+            :key="index"
+            :style="{ backgroundColor: color }"
+            class="w-6 h-6 rounded-full border border-gray-300 cursor-pointer"
+          ></div>
         </div>
 
         <!-- Size Selector -->
@@ -44,8 +60,12 @@
 
         <!-- Quantity and Actions -->
         <div class="flex items-center space-x-4">
-          <input type="number" min="1" v-model="quantity"
-            class="w-16 border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-gray-500" />
+          <input
+            type="number"
+            min="1"
+            v-model="quantity"
+            class="w-16 border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-gray-500"
+          />
           <Button @click="addToCart" :loading="loadingAdd" label="Add to Cart">
           </Button>
         </div>
@@ -63,14 +83,25 @@
     <!-- Tabs Section -->
     <div v-if="product" class="mt-8">
       <div class="flex space-x-8 border-b pb-2">
-        <h3 class="cursor-pointer text-lg font-semibold" :class="tabClass('details')" @click="activeTab = 'details'">
+        <h3
+          class="cursor-pointer text-lg font-semibold"
+          :class="tabClass('details')"
+          @click="activeTab = 'details'"
+        >
           Details
         </h3>
-        <h3 class="cursor-pointer text-lg font-semibold" :class="tabClass('reviews')" @click="activeTab = 'reviews'">
+        <h3
+          class="cursor-pointer text-lg font-semibold"
+          :class="tabClass('reviews')"
+          @click="activeTab = 'reviews'"
+        >
           Reviews
         </h3>
-        <h3 class="cursor-pointer text-lg font-semibold" :class="tabClass('discussion')"
-          @click="activeTab = 'discussion'">
+        <h3
+          class="cursor-pointer text-lg font-semibold"
+          :class="tabClass('discussion')"
+          @click="activeTab = 'discussion'"
+        >
           Discussion
         </h3>
       </div>
@@ -78,7 +109,10 @@
       <!-- Details Section -->
       <div v-if="activeTab === 'details'" class="mt-6 space-y-6">
         <ol>
-          <li class="text-gray-600 leading-relaxed pt-8" v-for="item in product.features">
+          <li
+            class="text-gray-600 leading-relaxed pt-8"
+            v-for="item in product.features"
+          >
             {{ item.description }}
           </li>
         </ol>
@@ -94,16 +128,29 @@
       <div v-if="activeTab === 'reviews'" class="mt-6 space-y-8">
         <div v-for="review in reviews" :key="review.id" class="border-b pb-4">
           <div class="flex items-center space-x-4">
-            <img :src="review.avatar" alt="User Avatar" class="w-10 h-10 rounded-full" />
+            <img
+              :src="review.avatar"
+              alt="User Avatar"
+              class="w-10 h-10 rounded-full"
+            />
             <div>
               <h4 class="font-bold text-gray-800">{{ review.name }}</h4>
               <p class="text-sm text-gray-500">{{ review.date }}</p>
               <div class="flex space-x-1 mt-1">
                 <template v-for="i in 5">
-                  <svg xmlns="http://www.w3.org/2000/svg" :fill="i <= review.rating ? 'currentColor' : 'none'"
-                    viewBox="0 0 24 24" stroke="currentColor" class="w-4 h-4 text-yellow-400">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    :fill="i <= review.rating ? 'currentColor' : 'none'"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    class="w-4 h-4 text-yellow-400"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"
+                    />
                   </svg>
                 </template>
               </div>
@@ -125,18 +172,33 @@
         <div class="flex items-start space-x-4">
           <!-- <img src="/path/to/default-avatar.jpg" alt="Your Avatar" class="w-10 h-10 rounded-full" /> -->
           <div class="flex-1">
-            <textarea v-model="newComment" placeholder="Write your comment..." rows="3"
-              class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
-            <button @click="addComment" class="mt-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
+            <textarea
+              v-model="newComment"
+              placeholder="Write your comment..."
+              rows="3"
+              class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            ></textarea>
+            <button
+              @click="addComment"
+              class="mt-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
+            >
               Post Comment
             </button>
           </div>
         </div>
 
         <!-- Display Existing Comments -->
-        <div v-for="comment in discussionComments" :key="comment.id" class="border-b pb-4">
+        <div
+          v-for="comment in discussionComments"
+          :key="comment.id"
+          class="border-b pb-4"
+        >
           <div class="flex items-center space-x-4">
-            <img :src="comment.avatar" alt="User Avatar" class="w-10 h-10 rounded-full" />
+            <img
+              :src="comment.avatar"
+              alt="User Avatar"
+              class="w-10 h-10 rounded-full"
+            />
             <div>
               <h4 class="font-bold text-gray-800">{{ comment.name }}</h4>
               <p class="text-sm text-gray-500">{{ comment.date }}</p>
@@ -144,16 +206,27 @@
           </div>
           <p class="mt-2 text-gray-700">{{ comment.content }}</p>
           <div class="flex items-center space-x-4 text-gray-500 text-sm mt-2">
-            <span @click="replyToComment(comment.id)" class="cursor-pointer hover:text-gray-700">Reply</span>
+            <span
+              @click="replyToComment(comment.id)"
+              class="cursor-pointer hover:text-gray-700"
+              >Reply</span
+            >
             <span>Likes: {{ comment.likes }}</span>
             <span>Replies: {{ comment.replies }}</span>
           </div>
 
           <!-- Replies -->
-          <div v-if="comment.replies && comment.replies.length" class="mt-4 pl-6 border-l">
+          <div
+            v-if="comment.replies && comment.replies.length"
+            class="mt-4 pl-6 border-l"
+          >
             <div v-for="reply in comment.replies" :key="reply.id" class="mt-2">
               <div class="flex items-center space-x-4">
-                <img :src="reply.avatar" alt="Reply Avatar" class="w-8 h-8 rounded-full" />
+                <img
+                  :src="reply.avatar"
+                  alt="Reply Avatar"
+                  class="w-8 h-8 rounded-full"
+                />
                 <div>
                   <h4 class="font-bold text-gray-800">{{ reply.name }}</h4>
                   <p class="text-sm text-gray-500">{{ reply.date }}</p>
@@ -167,12 +240,18 @@
     </div>
 
     <!-- Loading State -->
-    <div v-else class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
+    <div
+      v-else
+      class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50"
+    >
       <div class="relative flex justify-center items-center">
-        <div class="absolute animate-spin rounded-full h-32 w-32 border-t-4 border-b-4 border-purple-100"></div>
+        <div
+          class="absolute animate-spin rounded-full h-32 w-32 border-t-4 border-b-4 border-purple-100"
+        ></div>
         <img
           src="https://freelancerdxb.s3.eu-central-1.amazonaws.com/documents/image%20%285%29__5d197f13926ac20a20a6f301d00ce69b516f83eb.png"
-          class="rounded-full h-24 w-24" />
+          class="rounded-full h-24 w-24"
+        />
       </div>
       <!-- <div class="spinner-border animate-spin text-white" role="status">
         <span class="sr-only">Loading...</span>
@@ -186,14 +265,11 @@ import { useRoute } from "vue-router";
 import { ref, onMounted } from "vue";
 // import formatPrice from "~/plugins/formatPrice";
 
-const { $formatPrice } = useNuxtApp()
+const { $formatPrice } = useNuxtApp();
 
-
-
-
-const formattedPrice = (price) => {
-  return $formatPrice(price)
-}
+const formattedPrice = price => {
+  return $formatPrice(price);
+};
 
 const route = useRoute();
 const quantity = ref(1);
@@ -258,7 +334,7 @@ const addToCart = async () => {
   const productID = route.params.id;
   try {
     const body = {
-      productId: productID,
+      productModelId: productID,
       quantity: quantity.value,
     };
     const response = await $axios.post(`/product/cart/add`, body);
@@ -286,9 +362,9 @@ const getProductByID = async () => {
   };
 
   try {
-    const response = await $axios.get(`/product/by-id/${productID}`);
+    const response = await $axios.get(`product/model/by-id/${productID}`);
 
-    console.log("KDC", response)
+    console.log("KDC", response);
     product.value = {
       ...response.data,
       image: dummy.image,
