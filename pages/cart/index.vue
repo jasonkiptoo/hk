@@ -13,10 +13,7 @@
       <tbody>
         <tr v-for="item in cartItems" :key="item.id">
           <td>
-            <img
-              :src="item.product?.image || 'https://via.placeholder.com/80x80'"
-              alt="Product Image"
-            />
+            <img :src="item.productModel.images.find(image => image.isPrimary)?.optimizeUrl" alt="Product Image" />
             {{ item.productModel.name }}
           </td>
           <td>
@@ -24,13 +21,9 @@
             {{ formattedPrice(item.productModel?.price) }}
           </td>
           <td>
-            <input
-              type="number"
-              v-model.number="item.quantity"
+            <input type="number" v-model.number="item.quantity"
               class="w-16 border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-gray-500"
-              @change="updateQuantity(item.id, item.quantity)"
-              min="1"
-            />
+              @change="updateQuantity(item.id, item.quantity)" min="1" />
           </td>
           <td>
             KES
@@ -38,17 +31,14 @@
             {{ formattedPrice(item.productModel.price * item.quantity) }}
           </td>
           <td>
-            <button
-              @click="removeItem(item)"
-              style="
+            <button @click="removeItem(item)" style="
                 background-color: #2869a5;
                 color: white;
                 border: none;
                 padding: 5px 10px;
                 border-radius: 4px;
                 cursor: pointer;
-              "
-            >
+              ">
               Remove
             </button>
           </td>

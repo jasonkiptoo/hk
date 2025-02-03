@@ -69,18 +69,16 @@ export const useProductStore = defineStore('product', {
         console.error("Error adding to cart:", error);
       }
     },
-     async getOrders(productModelId, quantity) {
+    async getOrders() {
       try {
         const { $axios } = useNuxtApp();
-        const response = await $axios.post("/product/orders");
-        // this.cartItems.push(response.data);
-
-        this.orders = response.data;
-        // this.cartTotal += (quantity * response.data.price);
-        return { response }; 
+        const response = await $axios.get("/product/orders");
+        console.log(response, "orders");
+        this.orders = response.data;  // Update the orders
+        return response.data;  // Return the data
       } catch (error) {
-        
-        console.error("Error adding to cart:", error);
+        console.error("Error fetching orders:", error);
+        // return [];  // Return an empty array in case of error
       }
     },
 
@@ -181,19 +179,13 @@ async addToWishlist(productModelId) {
     async placeOrder() {
         try {
           const { $axios } = useNuxtApp();
-          
-          // Prepare order payload
           const orderData = {
             products: this.cartItems.map(item => ({
-              productModelId: item.product.id, 
+              productModelId: item.productModel.id, 
               quantity: item.quantity
             }))
           };
-  
-          // Send POST request to place the order
           const response = await $axios.post("/product/orders", orderData);
-          
-          // Handle response after placing the order
           if (response.data.success) {
             console.log("Order placed successfully:", response.data);
             // Clear cart items after successful order placement
@@ -207,7 +199,8 @@ async addToWishlist(productModelId) {
         } catch (error) {
           console.error("Error placing order:", error);
         }
-      }
+      } ,
+
     },
 
   getters: {

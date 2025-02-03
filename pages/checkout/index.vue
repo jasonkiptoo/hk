@@ -47,9 +47,10 @@
                 <!-- Cart Items -->
                 <div class="cart-items">
                     <div v-for="item in cartItems" :key="item.id" class="cart-item">
-                        <img :src="item.product.image || 'https://via.placeholder.com/80x80'" />
-                        <p>{{ item.product.name }}</p>
-                        <p>KES {{ (item.product.defaultPrice * item.quantity).toFixed(2) }}</p>
+
+                        <img :src="item.productModel?.image || 'https://via.placeholder.com/80x80'" />
+                        <p>{{ item.productModel.name }}</p>
+                        <p>KES {{ formattedPrice(item.productModel.price * item.quantity) }}</p>
                     </div>
                 </div>
 
@@ -64,17 +65,22 @@
                             </span></strong></p>
 
                     <!-- Payment Methods -->
-                    <div class="payment-methods">
+                    <div class="payment-methods flex gap-2 items-center">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/M-PESA_LOGO-01.svg/512px-M-PESA_LOGO-01.svg.png?20191120100524"
+                            class="w-1/4" alt="">
                         <label>
-                            <input type="radio" name="payment-method" value="bank" /> M-Pesa
+                            {{ user.phoneNumber }}
+                            <!-- <input type="radio" name="payment-method" value="bank" /> M-Pesa -->
                         </label>
-                        <label>
+                        <!-- <label>
                             <input type="radio" name="payment-method" value="cash" checked /> Cash on delivery
-                        </label>
+                        </label> -->
                     </div>
 
                     <!-- Place Order Button -->
-                    <button class="place-order-btn" @click="placeOrder()">Place Order</button>
+                    <!-- <button class="place-order-btn" @click="placeOrder()">Place Order</button> -->
+                    <Button type="button" class="place-order-btn" label="Place Order" :loading="loading"
+                        @click="placeOrder()" />
                 </div>
             </div>
 
@@ -136,6 +142,7 @@ export default {
 
         const placeOrder = async () => {
             console.log("cart", cartItems.value)
+            // const {products} = cartItems.value
             await productStore.placeOrder();
         };
 
