@@ -13,7 +13,7 @@
             <a v-else :href="item.url" :target="item.target" v-bind="props.action">
               <span class="text-surface-700 dark:text-surface-0">{{
                 item.label
-                }}</span>
+              }}</span>
             </a>
           </template>
         </Breadcrumb>
@@ -33,9 +33,9 @@
           <li @click="activeSection = 'orders'" class="font-bold text-red-500 mt-4 cursor-pointer">
             My Orders
           </li>
-          <li @click="activeSection = 'wishlist'" class="font-bold text-red-500 mt-4 cursor-pointer">
+          <!-- <li @click="activeSection = 'wishlist'" class="font-bold text-red-500 mt-4 cursor-pointer">
             My Wishlist
-          </li>
+          </li> -->
         </ul>
         <button @click="logout" class="bg-red-500 text-white px-4 py-2 rounded mt-12">
           Logout
@@ -61,13 +61,17 @@
                 <label>Email</label>
                 <input type="email" v-model="user.email" class="border w-full p-2 mt-1" />
               </div>
+              <div>
+                <label>Phone Number</label>
+                <input type="email" v-model="user.phoneNumber" class="border w-full p-2 mt-1" />
+              </div>
             </div>
-            <h3 class="mt-6 font-bold">Password Changes</h3>
+            <!-- <h3 class="mt-6 font-bold">Password Changes</h3>
             <div class="grid grid-cols-1 gap-4 mt-2">
               <input type="password" placeholder="Current Password" class="border w-full p-2" />
               <input type="password" placeholder="New Password" class="border w-full p-2" />
               <input type="password" placeholder="Confirm New Password" class="border w-full p-2" />
-            </div>
+            </div> -->
             <div class="flex justify-between mt-6">
               <button class="border px-4 py-2">Cancel</button>
               <button class="bg-red-500 text-white px-4 py-2">
@@ -82,6 +86,9 @@
           <h2 class="text-xl font-bold mb-4 text-red-500">Payment Method</h2>
           <!-- <p>Select your preferred payment method:</p> -->
           <div class="mt-4">
+            <img
+              src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/M-PESA_LOGO-01.svg/512px-M-PESA_LOGO-01.svg.png?20191120100524"
+              class="w-1/4" alt="">
             <h3 class="font-bold mb-2">Mpesa</h3>
             <p class="text-gray-600">Mobile Number: {{ user.phoneNumber }}</p>
           </div>
@@ -117,10 +124,17 @@
                   <span class="text-sm text-gray-500">{{ formatDate(order.createdAt) }}</span>
                 </div>
 
+
+
+
+
                 <div class="mt-2 flex items-start">
+                  <!-- {{ order.orderItems[1].productModel.images[0].optimizeUrl }} -->
                   <!-- v-if="order.orderItems.length" -->
-                  <img :src="order.orderItems[0].productModel.images[0]?.optimizeUrl" alt="Product Image"
+                  <img :src="order.orderItems[1].productModel.images[0].optimizeUrl" alt="Product Image"
                     class="w-16 h-16 rounded-md object-cover" />
+
+
                   <div class="ml-4">
                     <p class="text-red-600 font-semibold">Order ID: {{ order.id.slice(0, 8) }}</p>
                     <p class="text-gray-700">
@@ -129,7 +143,7 @@
                         }}
                         more items</span>
                     </p>
-                    <p class="text-gray-800 font-semibold mt-1">KES {{ order.total }}</p>
+                    <p class="text-gray-800 font-semibold mt-1">KES {{ formattedPrice(order.total) }}</p>
                   </div>
                 </div>
 
@@ -233,6 +247,24 @@ export default {
   },
 
   methods: {
+    getProductImage(orderItem) {
+      console.log("Order Item:", orderItem);
+
+      if (
+        orderItem?.productModel?.images?.length > 0
+      ) {
+        console.log("Image found:", orderItem.productModel.images[0].optimizeUrl);
+        return orderItem.productModel.images[0].optimizeUrl;
+      }
+
+      console.log("Using fallback image");
+      return "https://media.istockphoto.com/id/1410977641/photo/high-technology-security-monitoring-system-cctv-camera.jpg?s=612x612&w=0&k=20&c=ueVgTwwn5Xq-S0Tz6Wfj9sILEubWxURkzkvVrzpSYRI=";
+    }
+    ,
+    formattedPrice(price) {
+      const { $formatPrice } = useNuxtApp();
+      return $formatPrice(price);
+    },
     formatDate(date) {
       return new Date(date).toLocaleDateString("en-GB", { day: "2-digit", month: "long", year: "numeric" });
     },

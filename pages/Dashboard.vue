@@ -1,6 +1,6 @@
 <template>
   <div class="container mx-auto my-10 pa-10">
-    <!-- <TopCard :categories="categories" /> -->
+    <TopCard :categories="categories" />
     <!-- <section class="flash-sales mt-12 mx-4 ">
       <Carousel :value="categories" :numVisible="4" :numScroll="5" :responsiveOptions="responsiveOptions">
         <template #item="slotProps">
@@ -72,10 +72,7 @@
       </div>
     </section> -->
 
-    <section
-      class="flash-sales mt-5 mx-2 full-screen"
-      style="min-height: 900px"
-    >
+    <section class="flash-sales mt-5 mx-2 full-screen" style="min-height: 900px">
       <div class="flex justify-between items-center mb-4">
         <h2 class="text-xl font-bold">Explore Our Products</h2>
         <div class="flex space-x-2">
@@ -84,28 +81,18 @@
       </div>
       <div class="flex">
         <!-- Left Section -->
-        <FilterCard />
+        <!-- <FilterCard /> -->
         <!-- Right Section -->
         <div class="w-3/4">
-          <div
-            v-if="products.length > 0"
-            class="grid gap-3 grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4"
-          >
-            <ProductCard
-              v-for="product in products"
-              :key="product.id"
-              :item="product"
-            />
+          <div v-if="products.length > 0" class="grid gap-3 grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-5">
+            <ProductCard v-for="product in products" :key="product.id" :item="product" />
           </div>
           <div v-else class="text-center mt-6">
             <div class="relative flex justify-center items-center">
-              <div
-                class="absolute animate-spin rounded-full h-32 w-32 border-t-4 border-b-4 border-purple-100"
-              ></div>
+              <div class="absolute animate-spin rounded-full h-32 w-32 border-t-4 border-b-4 border-purple-100"></div>
               <img
                 src="https://freelancerdxb.s3.eu-central-1.amazonaws.com/documents/image%20%285%29__5d197f13926ac20a20a6f301d00ce69b516f83eb.png"
-                class="rounded-full h-24 w-24"
-              />
+                class="rounded-full h-24 w-24" />
             </div>
           </div>
         </div>
@@ -243,18 +230,9 @@ export default {
     };
     const getProduct = async () => {
       fetching.value = true;
-      const defaultImage =
-        "https://media.istockphoto.com/id/1977230951/photo/cctv-camera-installed-on-wall-of-the-building-scan-the-area-for-surveillance-purposes-can-be.jpg?s=612x612&w=0&k=20&c=f-Nw4cMVtYRU5Wo5D_625XfSU694lt-pSMx35RtyeiI=";
 
-      const dummy = {
-        images: [
-          "https://media.istockphoto.com/id/1483517773/photo/surveillance-camera.jpg?s=612x612&w=0&k=20&c=b9aT4ddM8TUCDLSpxEVA6QgRXRrvFRw-Wjzg57fmWls=",
-          "https://media.istockphoto.com/id/2179990939/photo/cctv-camera-installed-on-wall-of-the-building.jpg?s=612x612&w=0&k=20&c=Kel7XNE58teHLmVVka3ClU3fm_bku8X7BARtBGGRMoo=",
-          "https://media.istockphoto.com/id/1405489463/photo/three-quarter-view-of-varifocal-surveillance-camera-with-a-house-on-background.jpg?s=612x612&w=0&k=20&c=3YxtJAA4DiOgew23ZFNOgMc6Mmg29_D0oy_RWvNTA2w=",
-          "https://media.istockphoto.com/id/1715171405/photo/security-camera-on-the-wall-of-modern-office-building.jpg?s=612x612&w=0&k=20&c=gQ7aKD7P6LUk5OkbEUvZjq1xYElMpYJajwClN4T9-yo=",
-          "https://media.istockphoto.com/id/1321542113/photo/exterior-of-a-villa-with-security-camera.jpg?s=612x612&w=0&k=20&c=OGDHCN8QMIoZ7XwaXCbMH2-pqbbbTJJ91Y2MZg_-MTU=",
-        ],
-      };
+      const defaultImage =
+        "https://media.istockphoto.com/id/1977230951/photo/cctv-camera-installed-on-wall-of-the-building.jpg?s=612x612&w=0&k=20&c=f-Nw4cMVtYRU5Wo5D_625XfSU694lt-pSMx35RtyeiI=";
 
       try {
         const { $axios } = useNuxtApp();
@@ -269,29 +247,26 @@ export default {
 
         fetching.value = false;
 
-        // Flattening models from all products and attaching images
-        const models = response.data.map(product => product.models).flat();
+        // Process models and attach correct images
+        const modelsWithImages = response.data
+          .map(product => product.models)
+          .flat()
+          .map(model => {
+            let primaryImage = model.images?.find(img => img.isPrimary)?.uploadUrl;
 
-        // Here, we assign images to models instead of products
-        const modelsWithImages = models.map(model => {
-          if (!model.images || model.images.length === 0) {
-            model.images = [defaultImage];
-          }
+            return {
+              ...model,
+              image: primaryImage || defaultImage, // Use primary image or fallback
+            };
+          });
 
-          const randomIndex = Math.floor(Math.random() * dummy.images.length);
-          model.image = dummy.images[randomIndex];
-
-          return model;
-        });
-
-        // Now we have modelsWithImages with model details and image
         products.value = modelsWithImages;
       } catch (error) {
-        fetching.value = false;
-
         console.error("Error fetching products:", error);
+        fetching.value = false;
       }
     };
+
 
     const fetchCat = async () => {
       const { $axios } = useNuxtApp();

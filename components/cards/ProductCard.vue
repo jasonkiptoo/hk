@@ -1,80 +1,102 @@
 <template>
-  <div
-    class="border rounded-lg p-4 shadow hover:shadow-lg transition duration-200 cursor-pointer"
-  >
+  <!-- <div class="border rounded-lg p-4 shadow hover:shadow-lg transition duration-200 cursor-pointer">
     <div class="relative">
-      <img
-        :src="item.image"
-        alt="Product Image"
-        class="w-full h-40 object-cover rounded"
-      />
-      <button
-        class="absolute top-2 right-2"
-        :class="
-          isInWishlist(item.id)
-            ? 'text-red-500'
-            : 'text-gray-500 hover:text-red-500'
-        "
-        @click="wishProduct(item.id)"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          :fill="isInWishlist(item.id) ? 'currentColor' : 'none'"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          class="w-6 h-6"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78L12 20.23l8.84-8.84a5.5 5.5 0 000-7.78z"
-          />
+      <img :src="item.image" alt="Product Image" class="w-full h-40 object-cover rounded" />
+      <button class="absolute top-2 right-2" :class="isInWishlist(item.id)
+        ? 'text-red-500'
+        : 'text-gray-500 hover:text-red-500'
+        " @click="wishProduct(item.id)">
+        <svg xmlns="http://www.w3.org/2000/svg" :fill="isInWishlist(item.id) ? 'currentColor' : 'none'"
+          viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78L12 20.23l8.84-8.84a5.5 5.5 0 000-7.78z" />
         </svg>
       </button>
     </div>
     <div class="mt-4">
       <div class="">
         <div class="flex justify-between items-center">
-          <div
-            class="mt-0 font-semibold text-xl"
-            @click="goToProductPage(item)"
-          >
-            <h3 class="font-bold text-lg">{{ item.name }}</h3>
+          <div class="mt-0 font-semibold text-xl" @click="goToProductPage(item)">
+            <h3 class="font-bold text-lg">{{ item.name.slice(0, 12) }}</h3>
             <p class="text-red-500 font-bold space-x-2 mt-2">
               KES {{ formattedPrice(item.price) }}
             </p>
           </div>
           <span>
-            <Button
-              icon="pi pi-shopping-cart"
-              class="ml-"
-              @click="addToCart(item)"
-            />
+            <Button icon="pi pi-shopping-cart" class="ml-" @click="addToCart(item)" />
           </span>
         </div>
       </div>
       <div class="flex items-center mt-2">
         <div class="flex text-yellow-400">
           <template v-for="i in 5" :key="i">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-              stroke="none"
-              class="w-4 h-4"
-            >
-              <path
-                d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"
-              />
+            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" stroke="none"
+              class="w-4 h-4">
+              <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
             </svg>
           </template>
-        </div>
-        <p class="ml-2 text-gray-500 text-sm">({{ item.reviews }} reviews)</p>
+</div>
+<p class="ml-2 text-gray-500 text-sm">({{ item.reviews }} reviews)</p>
+</div>
+</div>
+<Toast position="bottom-right" group="br" />
+</div> -->
+
+  <div class="border-r border-gray-200 rounded-lg p-4 text-center bg-white shadow-md relative group">
+    <!-- New Tag -->
+    <Tag value="NEW" class="absolute top-2 left-2 bg-orange-500 text-white px-2 py-1 rounded-md text-xs" />
+
+    <!-- Product Image -->
+    <img :src="item.image" class="h-32 mx-auto mb-2 transition-transform group-hover:scale-105" alt="Product Image" />
+
+    <!-- Product Name -->
+    <div class="flex flex-col items-ext-center p-2">
+      <h3 class="text-sm font-medium truncate">
+        {{ item.name }}
+      </h3>
+
+      <!-- Rating -->
+      <div class="flex justify-start mt-1">
+        <span v-for="star in 5" :key="star" class="text-yellow-400">
+          <i :class="{
+            'pi pi-star-fill': star <= item.rating,
+            'pi pi-star': star > item.rating,
+          }"></i>
+        </span>
+        <span class="text-gray-500 ml-2">
+          <div class="flex items-center mt-2">
+            <div class="flex text-yellow-400">
+              <template v-for="i in 5" :key="i">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" stroke="none"
+                  class="w-4 h-4">
+                  <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                </svg>
+              </template>
+            </div>
+            <p class="ml-2 text-gray-500 text-sm">({{ item.reviews }} reviews)</p>
+          </div>
+        </span>
       </div>
+
+      <!-- Price -->
+      <p class="text-red-500 font-semibold">
+        KES {{ formattedPrice(item.price) }}
+        <!-- <span class="line-through text-gray-400">{{ formattedPrice(item.oldPrice) }}</span> -->
+      </p>
+    </div>
+
+    <!-- Hover Buttons -->
+    <div class="absolute top-4 right-4 flex flex-col space-y-2 opacity-0 group-hover:opacity-100 transition-opacity">
+      <button @click="addToCart(item)" class="bg-white p-2 rounded-full shadow hover:bg-gray-100">
+        <i class="pi pi-shopping-cart text-gray-600"></i>
+      </button>
+      <button @click="wishProduct(item.id)" class="bg-white p-2 rounded-full shadow hover:bg-gray-100">
+        <i class="pi pi-heart text-gray-600"></i>
+      </button>
     </div>
     <Toast position="bottom-right" group="br" />
   </div>
+
 </template>
 
 <script setup>
