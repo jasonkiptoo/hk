@@ -186,16 +186,17 @@ async addToWishlist(productModelId) {
             }))
           };
           const response = await $axios.post("/product/orders", orderData);
-          if (response.data.success) {
+          // if (response.data.success) {
             console.log("Order placed successfully:", response.data);
-            // Clear cart items after successful order placement
-            this.cartItems = [];
-            this.cartCount = 0;
-            this.cartTotal = 0;
-          } else {
-            console.error("Failed to place order:", response.data);
-          }
+          //   // Clear cart items after successful order placement
+          //   this.cartItems = [];
+          //   this.cartCount = 0;
+          //   this.cartTotal = 0;
+          // } else {
+          //   console.error("Failed to place order:", response.data);
+          // }
   
+          return response
         } catch (error) {
           console.error("Error placing order:", error);
         }

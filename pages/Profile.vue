@@ -131,7 +131,7 @@
                 <div class="mt-2 flex items-start">
                   <!-- {{ order.orderItems[1].productModel.images[0].optimizeUrl }} -->
                   <!-- v-if="order.orderItems.length" -->
-                  <img :src="order.orderItems[1].productModel.images[0].optimizeUrl" alt="Product Image"
+                  <img :src="order.orderItems[1].productModel.images[0]?.optimizeUrl" alt="Product Image"
                     class="w-16 h-16 rounded-md object-cover" />
 
 
@@ -194,7 +194,7 @@ export default {
   data() {
     return {
       selectedFilter: "All",
-      filters: ["All", "In Progress", "Delivered", "Cancelled"],
+      filters: ["All", "Pending", "Delivered", "Cancelled"],
       removeItem: false,
       loadingAdd: false,
       home: {
@@ -253,7 +253,7 @@ export default {
       if (
         orderItem?.productModel?.images?.length > 0
       ) {
-        console.log("Image found:", orderItem.productModel.images[0].optimizeUrl);
+        console.log("Image found:", orderItem.productModel.images[0]?.optimizeUrl);
         return orderItem.productModel.images[0].optimizeUrl;
       }
 

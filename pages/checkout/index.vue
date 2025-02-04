@@ -47,8 +47,7 @@
                 <!-- Cart Items -->
                 <div class="cart-items">
                     <div v-for="item in cartItems" :key="item.id" class="cart-item">
-
-                        <img :src="item.productModel?.image || 'https://via.placeholder.com/80x80'" />
+                        <img :src="item.productModel.images[0]?.optimizeUrl || 'https://via.placeholder.com/80x80'" />
                         <p>{{ item.productModel.name }}</p>
                         <p>KES {{ formattedPrice(item.productModel.price * item.quantity) }}</p>
                     </div>
@@ -85,6 +84,7 @@
             </div>
 
         </div>
+        <Toast position="bottom-right" group="br" />
     </div>
 </template>
 
@@ -95,6 +95,7 @@ import { useUserStore } from "@/stores/auth";
 
 export default {
     setup() {
+        const loading = ref(false)
         const { $formatPrice } = useNuxtApp()
         const userStore = useUserStore(); // Use the user store
         const productStore = useProductStore(); // Use the product store
@@ -141,9 +142,19 @@ export default {
         };
 
         const placeOrder = async () => {
+            loading.value = true
             console.log("cart", cartItems.value)
             // const {products} = cartItems.value
-            await productStore.placeOrder();
+            const response = await productStore.placeOrder();
+            console.log(response)
+            loading.value = false
+
+            toast.add({
+                severity: "success",
+                summary: "Your Order has been placed successfully, Thank you",
+                group: "br",
+                life: 3000,
+            });
         };
 
         onMounted(() => {
@@ -158,6 +169,7 @@ export default {
             applyCoupon,
             placeOrder,
             formattedPrice,
+            loading
         };
     },
 };
