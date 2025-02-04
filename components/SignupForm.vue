@@ -1,11 +1,22 @@
 <template>
   <div class="w-full mx-auto h-screen flex items-center">
     <div class="flex flex-wrap w-full mt-28">
-      <div class="hidden md:flex w-full md:w-1/2 items-center justify-center mb-4 md:mb-0 image_cont">
+      <div
+        class="hidden md:flex w-full md:w-1/2 items-center justify-center mb-4 md:mb-0 image_cont"
+      >
         <img src="@/assets/images/login.png" alt="Login" class="h-full" />
       </div>
-      <div class="w-full md:w-1/2"
-        style="height: 100vh; background-color: white; display: flex; justify-content: center; align-items: center; padding: 100px;">
+      <div
+        class="w-full md:w-1/2"
+        style="
+          height: 100vh;
+          background-color: white;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          padding: 100px;
+        "
+      >
         <div>
           <h2 class="text-5xl font-semibold mt-4 mb-8 text-left">
             Create an account
@@ -15,23 +26,51 @@
           </p>
           <form v-if="!otpSent" @submit.prevent="register" class="w-full">
             <div class="flex space-x-4 mb-4">
-              <input type="text" placeholder="First Name"
-                class="w-full md:w-1/2 border-b p-2 focus:outline-none focus:border-red-500" v-model="form.firstName" />
-              <input type="text" placeholder="Last Name"
-                class="w-full md:w-1/2 border-b p-2 focus:outline-none focus:border-red-500" v-model="form.lastName" />
+              <input
+                type="text"
+                placeholder="First Name"
+                class="w-full md:w-1/2 border-b p-2 focus:outline-none focus:border-red-500"
+                v-model="form.firstName"
+              />
+              <input
+                type="text"
+                placeholder="Last Name"
+                class="w-full md:w-1/2 border-b p-2 focus:outline-none focus:border-red-500"
+                v-model="form.lastName"
+              />
             </div>
-            <input type="email" placeholder="Email"
+            <input
+              type="email"
+              placeholder="Email"
               class="md:w-full sm:w-full w-full border-b p-2 mb-4 focus:outline-none focus:border-red-500"
-              v-model="form.email" />
-            <input type="password" placeholder="Password"
-              class="w-full border-b p-2 mb-4 focus:outline-none focus:border-red-500" v-model="form.password" />
-            <input type="text" placeholder="Phone"
-              class="w-full border-b p-2 mb-4 focus:outline-none focus:border-red-500" v-model="form.phone" />
+              v-model="form.email"
+            />
+            <input
+              type="password"
+              placeholder="Password"
+              class="w-full border-b p-2 mb-4 focus:outline-none focus:border-red-500"
+              v-model="form.password"
+            />
+            <input
+              type="text"
+              placeholder="Phone"
+              class="w-full border-b p-2 mb-4 focus:outline-none focus:border-red-500"
+              v-model="form.phone"
+            />
 
-            <Select v-model="form.role" :options="roles" optionLabel="name" @change="handleRole"
-              placeholder="Select a Role" class="w-full custom-dropdown" />
+            <Select
+              v-model="form.role"
+              :options="roles"
+              optionLabel="name"
+              @change="handleRole"
+              placeholder="Select a Role"
+              class="w-full custom-dropdown"
+            />
 
-            <button type="submit" class="w-full bg-red-500 text-white py-3 rounded hover:bg-red-600 mt-12">
+            <button
+              type="submit"
+              class="w-full bg-red-500 text-white py-3 rounded hover:bg-red-600 mt-12"
+            >
               Sign Up
             </button>
           </form>
@@ -40,14 +79,24 @@
           <div v-else>
             <h3 class="text-3xl font-medium mb-4">Verify OTP</h3>
             <p class="text-gray-500 mb-6">
-              Enter the OTP sent to your email address. <span class="font-weight-bold" style="font-weight: bold;">{{
-                form.email }} </span>
+              Enter the OTP sent to your email address.
+              <span class="font-weight-bold" style="font-weight: bold"
+                >{{ form.email }}
+              </span>
             </p>
             <div class="w-full mb-4">
-              <InputOtp :length="6" mask="*" v-model="otp" class="p-inputtex w-full text-center p-3"
-                placeholder="Enter OTP" />
+              <InputOtp
+                :length="6"
+                mask="*"
+                v-model="otp"
+                class="p-inputtex w-full text-center p-3"
+                placeholder="Enter OTP"
+              />
             </div>
-            <button @click="verifyOtp" class="w-full bg-red-500 text-white py-3 rounded hover:bg-red-600">
+            <button
+              @click="verifyOtp"
+              class="w-full bg-red-500 text-white py-3 rounded hover:bg-red-600"
+            >
               Verify OTP
             </button>
           </div>
@@ -91,9 +140,9 @@ export default {
   },
   methods: {
     handleRole() {
-      if (this.form.role.name == "SUDO1") {
+      if (this.form.role.name == "TECHNICIAN") {
         console.log("role: ", this.form.role);
-        this.$emit('show-questionnaire')
+        this.$emit("show-questionnaire");
       }
     },
     async register() {
@@ -128,9 +177,10 @@ export default {
       try {
         const { $axios } = useNuxtApp();
         const userStore = useUserStore();
-        const { accessToken, user } = await userStore.verifyOtp(
-          { email: this.form.email, otp: this.otp }
-        );
+        const { accessToken, user } = await userStore.verifyOtp({
+          email: this.form.email,
+          otp: this.otp,
+        });
         if (accessToken) {
           this.$router.push("/dashboard"); // Navigate to the dashboard upon success
         }
@@ -186,7 +236,8 @@ export default {
 </script>
 
 <style scoped>
-.image_cont {}
+.image_cont {
+}
 
 .custom-dropdown .p-dropdown {
   border: none;
