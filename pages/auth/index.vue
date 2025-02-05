@@ -1,5 +1,5 @@
 <template>
-  <div class=" " style="background-color: white;">
+  <div class="" style="background-color: white;">
     <SignupForm v-if="isSignup" @toggle="toggleForm" @show-questionnaire="showQuestionnaire" />
     <QuestionnaireForm v-else-if="showQuestionnaireVisible" />
     <LoginForm v-else @toggle="toggleForm" />
@@ -12,6 +12,7 @@ import LoginForm from "~/components/LoginForm.vue";
 import QuestionnaireForm from "~/components/stepper/QuestionnaireForm.vue";
 
 export default {
+  layout: "login",
   components: {
     SignupForm,
     LoginForm,

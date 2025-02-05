@@ -1,6 +1,7 @@
 <template>
   <!-- style="background-image: url('/images/bg.jpg');" -->
-  <div class="sticky top-0 bg-cover bg-center h-200]">
+  <!-- sticky top-0 bg-cover bg-center h-200] -->
+  <div class="">
     <Navbar @update:searchTerm="handleSearchUpdate" :refresh="refresh" />
     <NuxtPage :search-term="searchTerm" @refreshNavbar="handleRefresh" />
   </div>
