@@ -51,7 +51,7 @@
 
     <!-- Product Name -->
     <div class="flex flex-col items-ext-center p-2">
-      <h3 class="text-sm font-medium truncate">
+      <h3 class="text-sm font-medium truncate" @click="goToProductPage(item)">
         {{ item.name }}
       </h3>
 
@@ -73,7 +73,9 @@
                 </svg>
               </template>
             </div>
-            <p class="ml-2 text-gray-500 text-sm">({{ item.reviews }} reviews)</p>
+            <p class="ml-2 text-gray-500 text-sm">
+              ({{ item.reviews }} reviews)
+            </p>
           </div>
         </span>
       </div>
@@ -96,7 +98,6 @@
     </div>
     <Toast position="bottom-right" group="br" />
   </div>
-
 </template>
 
 <script setup>
@@ -273,7 +274,7 @@ const addToCart = async product => {
 };
 
 const goToProductPage = product => {
-  console.log("prodcet", product);
+  // console.log("prodcet", product);
   router.push({
     path: `/products/${product.id}`,
   });
