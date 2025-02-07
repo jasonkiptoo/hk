@@ -72,7 +72,10 @@
       </div>
     </section> -->
 
-    <section class="flash-sales mt-5 mx-2 full-screen" style="min-height: 900px">
+    <section
+      class="flash-sales mt-5 mx-2 full-screen"
+      style="min-height: 900px"
+    >
       <div class="flex justify-between items-center mb-4">
         <h2 class="text-xl font-bold">Explore Our Products</h2>
         <div class="flex space-x-2">
@@ -81,19 +84,46 @@
       </div>
       <div class="flex">
         <!-- Left Section -->
-        <!-- <FilterCard /> -->
+        <FilterCard v-if="filter" />
         <!-- Right Section -->
-        <div class="w-3/4">
-          <div v-if="products.length > 0" class="grid gap-3 grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-5">
-            <ProductCard v-for="product in products" :key="product.id" :item="product" />
-          </div>
-          <div v-else class="text-center mt-6">
+        <div class="w-full">
+          <div v-if="fetching" class="text-center mt-6">
             <div class="relative flex justify-center items-center">
-              <div class="absolute animate-spin rounded-full h-32 w-32 border-t-4 border-b-4 border-purple-100"></div>
+              <div
+                class="absolute animate-spin rounded-full h-32 w-32 border-t-4 border-b-4 border-purple-100"
+              ></div>
               <img
                 src="https://freelancerdxb.s3.eu-central-1.amazonaws.com/documents/image%20%285%29__5d197f13926ac20a20a6f301d00ce69b516f83eb.png"
-                class="rounded-full h-24 w-24" />
+                class="rounded-full h-24 w-24"
+              />
             </div>
+          </div>
+
+          <div
+            v-else-if="products.length === 0 && !fetching"
+            class="flex flex-col items-center justify-center text-center mt-12 text-gray-500"
+          >
+            <img
+              src="@/assets/images/empty.jpg"
+              alt="No items found"
+              class="h-56 w-56"
+            />
+            <p class="pt-6">No items found</p>
+          </div>
+
+          <div
+            v-else
+            class="grid gap-3 grid-cols-1 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 justify-center"
+          >
+            <ProductCard
+              v-for="product in products"
+              :key="product.id"
+              :item="product"
+            />
+          </div>
+
+          <div class="flex justify-center py-8" v-if="products.length != 0">
+            <button class="bg-red-500 text-white px-4 py-2">Show More</button>
           </div>
         </div>
       </div>
@@ -131,7 +161,7 @@ export default {
     watch(
       () => props.searchTerm,
       (newVal, oldVal) => {
-        console.log(`searchTerm changed from ${oldVal} to ${newVal}`);
+        filter.value = true;
         getProduct(newVal);
       }
     );
@@ -146,7 +176,7 @@ export default {
       //  timer.value = setInterval(updateTime(), 1000);
     });
     // const emit = defineEmits(["refresh"]);
-
+    const filter = ref(false);
     const value = ref([20, 80]);
     const fetching = ref(false);
     const timeLeft = ref({
@@ -189,9 +219,7 @@ export default {
         };
       }
     };
-    const images = ref([
-
-    ]);
+    const images = ref([]);
     const categories = ref([]);
     const { $axios } = useNuxtApp();
     const products = ref([]);
@@ -228,6 +256,8 @@ export default {
 
         const response = await $axios.get("/product", { params });
 
+        console.log(response, "data");
+
         fetching.value = false;
 
         // Process models and attach correct images
@@ -235,7 +265,9 @@ export default {
           .map(product => product.models)
           .flat()
           .map(model => {
-            let primaryImage = model.images?.find(img => img.isPrimary)?.uploadUrl;
+            let primaryImage = model.images?.find(
+              img => img.isPrimary
+            )?.uploadUrl;
 
             return {
               ...model,
@@ -250,7 +282,6 @@ export default {
       }
     };
 
-
     const fetchCat = async () => {
       const { $axios } = useNuxtApp();
       try {
@@ -260,8 +291,6 @@ export default {
         console.error("Error fetching products:", error);
       }
     };
-
-    const productss = ref([]);
     const responsiveOptions = ref([
       {
         breakpoint: "1400px",
@@ -309,11 +338,11 @@ export default {
       goToSlide,
       categories,
       products,
-      productss,
       responsiveOptions,
       getItems,
       getSeverity,
       value,
+      filter,
     };
   },
 };
