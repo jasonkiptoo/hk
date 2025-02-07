@@ -1,85 +1,158 @@
 <template>
   <div class="p-6 container mx-auto">
-    <h2 class="text-2xl font-bold mb-4">Wishlist ({{ wishlist.length }})</h2>
-    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-6 mb-6">
-      <div v-for="(item, index) in wishlist" :key="index" class="bg-white border rounded-lg shadow-sm overflow-hidden">
-        <div class="relative">
-          <!-- Check for the primary image and render it -->
-          <img :src="item.productModel.images.find(image => image.isPrimary)?.optimizeUrl" :alt="item.productModel.name"
-            class="w-full h-40 object-cover" />
-          <span v-if="item.discount" class="absolute top-2 left-2 bg-red-500 text-white text-xs px-2 py-1 rounded">
-            -{{ item.discount }}%
-          </span>
-          <button class="absolute top-2 right-2 bg-gray-100 text-gray-500 rounded-full p-1 hover:text-red-500"
-            @click="removeFromWishlist(index)">
-            <i class="pi pi-trash"></i>
-          </button>
-        </div>
+    <!-- Cart Empty Card -->
+    <div class="flex flex-col items-center justify-center bg-white shadow-lg rounded-lg p-6 mb-6"
+      v-if="wishList.length < 1">
+      <img src="@/assets/images/wish-list.png" alt="Empty Cart" class="w-20 h-20 mb-4" />
+      <h2 class="text-xl font-semibold text-gray-700">Your wishlist is empty!</h2>
+      <p class="text-gray-500 text-sm mb-4">Browse our categories and discover our best deals!</p>
+      <NuxtLink to="/">
 
-        <div class="p-4">
-          <h3 class="text-lg font-semibold">{{ item.productModel.name.slice(0, 15) }}</h3>
-          <p class="text-gray-500 mb-2">
-            <span class="text-red-500 font-bold">KES {{ formattedPrice(item.productModel.price) }}</span>
-            <span v-if="item.originalPrice" class="line-through text-sm ml-2 text-gray-400">
-              ${{ item.originalPrice }}
+        <button class="bg-primary hover:bg-orange-600 text-white font-semibold px-4 py-2 rounded">
+          Start Shopping
+        </button>
+      </NuxtLink>
+    </div>
+
+    <!-- Recently Viewed Section -->
+    <div class="p-6 container mx-auto" v-else>
+      <h2 class="text-2xl font-bold mb-4">Wishlist ({{ wishList.length }})</h2>
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-6 mb-6">
+        <div v-for="(item, index) in wishList" :key="index"
+          class="bg-white border rounded-lg shadow-sm overflow-hidden">
+          <div class="relative">
+            <img :src="item.productModel?.images.find(image => image.isPrimary)?.optimizeUrl"
+              :alt="item.productModel?.name" class="w-full h-40 object-cover" />
+            <span v-if="item.discount" class="absolute top-2 left-2 bg-red-500 text-white text-xs px-2 py-1 rounded">
+              -{{ item.discount }}%
             </span>
-          </p>
-          <button class="w-full bg-black text-white py-2 rounded hover:bg-gray-800" @click="addToCart(item)">
-            Add To Cart
-          </button>
+            <button class="absolute top-2 right-2 bg-gray-100 text-gray-500 rounded-full p-1 hover:text-red-500"
+              @click="removeFromWishlist(item)">
+              <i class="pi pi-trash"></i>
+            </button>
+          </div>
+
+          <div class="p-4">
+            <h3 class="text-lg font-semibold">{{ item.productModel?.name.slice(0, 15) }}</h3>
+            <p class="text-gray-500 mb-2">
+              <span class="text-red-500 font-bold">KES {{ formattedPrice(item.productModel?.price) }}</span>
+              <span v-if="item?.originalPrice" class="line-through text-sm ml-2 text-gray-400">
+                KES{{ item?.originalPrice }}
+              </span>
+            </p>
+            <button class="w-full bg-black text-white py-2 rounded hover:bg-gray-800" @click="addToCart(item)">
+              Add To Cart
+            </button>
+          </div>
         </div>
       </div>
+      <div>
+        <!-- <button class="bg-black text-white px-4 py-2 rounded hover:bg-gray-800" @click="moveAllToCart">
+          Move All To Bag
+        </button> -->
+      </div>
     </div>
-    <div>
-      <!-- <button class="bg-black text-white px-4 py-2 rounded hover:bg-gray-800" @click="moveAllToCart">
-        Move All To Bag
-      </button> -->
+
+    <div class="bg-white shadow-lg rounded-lg p-4">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-semibold text-gray-700">Recently Viewed</h3>
+        <NuxtLink to="/cart">
+          <a href="#" class="text-primary hover:text-orange-600 text-sm font-semibold flex items-center">
+            See All <i class="ml-1 pi pi-angle-right"></i>
+          </a>
+        </NuxtLink>
+      </div>
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+        <div v-for="(item, index) in cartItems" :key="index" class="border rounded-lg p-3">
+          <img
+            :src="item.productModel.images.length ? item.productModel.images[0].uploadUrl : 'https://via.placeholder.com/150'"
+            :alt="item.productModel.name" class="w-full h-40 object-cover mb-2 rounded-lg" />
+          <p class="text-sm font-medium">{{ item.productModel.name }}</p>
+          <p class="text-primary font-semibold text-lg">KSh {{ formattedPrice(item.productModel.price) }}</p>
+        </div>
+      </div>
+
     </div>
+    <div class="bg-white shadow-lg rounded-lg p-4 mt-4">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-semibold text-gray-700">Top Selling Items</h3>
+        <NuxtLink to="/cart">
+          <a href="#" class="text-primary hover:text-orange-600 text-sm font-semibold flex items-center">
+            See All <i class="ml-1 pi pi-angle-right"></i>
+          </a>
+        </NuxtLink>
+      </div>
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+        <div v-for="(item, index) in cartItems" :key="index" class="border rounded-lg p-3">
+          <img
+            :src="item.productModel.images.length ? item.productModel.images[0].uploadUrl : 'https://via.placeholder.com/150'"
+            :alt="item.productModel.name" class="w-full h-40 object-cover mb-2 rounded-lg" />
+          <p class="text-sm font-medium">{{ item.productModel.name }}</p>
+          <p class="text-primary font-semibold text-lg">KSh {{ formattedPrice(item.productModel.price) }}</p>
+        </div>
+      </div>
+
+    </div>
+    <Toast position="bottom-right" group="br" />
   </div>
+
 </template>
 
 <script>
+import { computed, onMounted } from "vue";
 import { useProductStore } from "@/stores/productStore";
 import { useUserStore } from "@/stores/auth";
+
 export default {
-  mounted() {
-    this.getWishList();
-  },
-  data() {
-    return {
-      wishlist: [],
-    };
-  },
-  methods: {
-    formattedPrice(price) {
+  setup() {
+    const productStore = useProductStore();
+    const userStore = useUserStore();
+    const toast = useToast();
+    // Computed properties
+    const wishList = computed(() => productStore.wishListItems);
+    const cartItems = computed(() => productStore.cartItems);
+    const cartCount = computed(() => productStore.cartCount);
+    const cartTotal = computed(() => productStore.cartTotal);
+    const products = computed(() => productStore.products);
+
+    // Fetch wishlist on mount
+    onMounted(() => {
+      productStore.getWishList();
+    });
+
+    // Methods
+    const formattedPrice = (price) => {
       const { $formatPrice } = useNuxtApp();
       return $formatPrice(price);
-    },
-    removeFromWishlist(index) {
-      this.wishlist.splice(index, 1);
-    },
-    async addToCart(product) {
-      console.log("cdscs", product);
-      const userStore = useUserStore();
+    };
 
+    const removeFromWishlist = async (item) => {
+      console.log("cdcs item", item)
+      // const productId = wishList.value[index].productModel.id;
+      await productStore.removeFromWishlist(item.id);
+    };
+
+    const addToCart = async (product) => {
       let user = userStore.user;
       try {
-        const productStore = useProductStore(); // Access the store
         const { response } = await productStore.addToCart(
-          product.productModelId,
+          product.productModel.id,
           1,
           user.id
         );
-
+        // to remove the product
+        const { res } = await productStore.addToWishlist(
+          product.productModel.id,
+        );
         // Notify user on successful addition
         toast.add({
           severity: "success",
-          summary: "Product Added to Cart",
+          summary: "Product moved to Cart",
           group: "br",
           life: 3000,
         });
 
-        console.log(response);
+
       } catch (error) {
         // Handle errors and show appropriate toast messages
         toast.add({
@@ -90,21 +163,18 @@ export default {
           life: 5000,
         });
       }
-      // alert(`Added ${item.name} to the cart!`);
-    },
-    moveAllToCart() {
-      alert("All items have been moved to the cart!");
-      this.wishlist = [];
-    },
-    async getWishList() {
-      try {
-        const { $axios } = useNuxtApp();
-        const response = await $axios.get("/product/wishlist");
-        this.wishlist = response.data;
-      } catch (error) {
-        console.error("Error fetching products:", error);
-      }
-    },
+    };
+
+    return {
+      wishList,
+      cartItems,
+      cartCount,
+      cartTotal,
+      formattedPrice,
+      removeFromWishlist,
+      addToCart,
+      products
+    };
   },
 };
 </script>

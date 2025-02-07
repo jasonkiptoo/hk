@@ -42,21 +42,12 @@
 <Toast position="bottom-right" group="br" />
 </div> -->
 
-  <div
-    class="border-r border-gray-200 rounded-lg p-4 text-center bg-white shadow-md relative group"
-  >
+  <div class="border-r border-gray-200 rounded-lg p-4 text-center bg-white shadow-md relative group">
     <!-- New Tag -->
-    <Tag
-      value="NEW"
-      class="absolute top-2 left-2 bg-orange-500 text-white px-2 py-1 rounded-md text-xs"
-    />
+    <!-- <Tag value="NEW" class="absolute top-2 left-2 bg-orange-500 text-white px-2 py-1 rounded-md text-xs" /> -->
 
     <!-- Product Image -->
-    <img
-      :src="item.image"
-      class="h-32 mx-auto mb-2 transition-transform group-hover:scale-105"
-      alt="Product Image"
-    />
+    <img :src="item.image" class="h-32 mx-auto mb-2 transition-transform group-hover:scale-105" alt="Product Image" />
 
     <!-- Product Name -->
     <div class="flex flex-col items-ext-center p-2">
@@ -67,27 +58,18 @@
       <!-- Rating -->
       <div class="flex justify-start mt-1">
         <span v-for="star in 5" :key="star" class="text-yellow-400">
-          <i
-            :class="{
-              'pi pi-star-fill': star <= item.rating,
-              'pi pi-star': star > item.rating,
-            }"
-          ></i>
+          <i :class="{
+            'pi pi-star-fill': star <= item.rating,
+            'pi pi-star': star > item.rating,
+          }"></i>
         </span>
         <span class="text-gray-500 ml-2">
           <div class="flex items-center mt-2">
             <div class="flex text-yellow-400">
               <template v-for="i in 5" :key="i">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                  stroke="none"
-                  class="w-4 h-4"
-                >
-                  <path
-                    d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"
-                  />
+                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" stroke="none"
+                  class="w-4 h-4">
+                  <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
                 </svg>
               </template>
             </div>
@@ -106,19 +88,11 @@
     </div>
 
     <!-- Hover Buttons -->
-    <div
-      class="absolute top-4 right-4 flex flex-col space-y-2 opacity-0 group-hover:opacity-100 transition-opacity"
-    >
-      <button
-        @click="addToCart(item)"
-        class="bg-white p-2 rounded-full shadow hover:bg-gray-100"
-      >
+    <div class="absolute top-4 right-4 flex flex-col space-y-2 opacity-0 group-hover:opacity-100 transition-opacity">
+      <button @click="addToCart(item)" class="bg-white p-2 rounded-full shadow hover:bg-gray-100">
         <i class="pi pi-shopping-cart text-gray-600"></i>
       </button>
-      <button
-        @click="wishProduct(item.id)"
-        class="bg-white p-2 rounded-full shadow hover:bg-gray-100"
-      >
+      <button @click="wishProduct(item)" class="bg-white p-2 rounded-full shadow hover:bg-gray-100">
         <i class="pi pi-heart text-gray-600"></i>
       </button>
     </div>
@@ -203,8 +177,8 @@ function isInWishlist(productId) {
   return false;
 }
 
-const wishProduct = async productId => {
-  console.log(productId, "Attempting to add to wishlist");
+const wishProduct = async (product) => {
+  // console.log(productId, "Attempting to add to wishlist");
 
   const productStore = useProductStore(); // Access the store
   const userStore = useUserStore(); // Access the user store for authentication state
@@ -212,7 +186,7 @@ const wishProduct = async productId => {
   try {
     if (userStore.isLoggedIn) {
       // Logged-in user: Add to the server-side wishlist
-      const { res } = await productStore.addToWishlist(productId);
+      const { res } = await productStore.addToWishlist(product.id);
       await productStore.getWishList(); // Refresh wishlist from the server
 
       toast.add({
@@ -227,13 +201,14 @@ const wishProduct = async productId => {
 
       // Check if the product is already in the local wishlist
       const existingIndex = localWishlist.findIndex(
-        item => item.id === productId
+        item => item.id === product.id
       );
-
       if (existingIndex === -1) {
         // Product is not in the wishlist, add it
-        localWishlist.push({ id: productId });
+        localWishlist.push(product);
         localStorage.setItem("wishlist", JSON.stringify(localWishlist));
+
+        await productStore.getWishList();
 
         toast.add({
           severity: "success",
@@ -245,6 +220,7 @@ const wishProduct = async productId => {
         // Product is already in the wishlist, remove it
         localWishlist.splice(existingIndex, 1); // Remove the item from the array
         localStorage.setItem("wishlist", JSON.stringify(localWishlist));
+        await productStore.getWishList();
 
         toast.add({
           severity: "info",
@@ -269,11 +245,12 @@ const wishProduct = async productId => {
 
 const addToCart = async product => {
   const userStore = useUserStore();
+  console.log("Csdc", product)
 
   let user = userStore.user;
   try {
     const productStore = useProductStore(); // Access the store
-    const { response } = await productStore.addToCart(product.id, 1, user.id);
+    const { response } = await productStore.addToCart(product.id, 1);
 
     // Notify user on successful addition
     toast.add({

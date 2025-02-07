@@ -103,7 +103,7 @@ export default {
         const cartItems = computed(() => productStore.cartItems);
         // const $formatPrice = useNuxtApp()
         // Pre-fill user details from the store
-        const user = computed(() => userStore.user || { firstName: "", phoneNumber: "", email: "" });
+        const user = computed(() => userStore.user);
 
         const formattedPrice = (price) => {
             return $formatPrice(price);
@@ -146,8 +146,17 @@ export default {
             console.log("cart", cartItems.value)
             // const {products} = cartItems.value
             const response = await productStore.placeOrder();
-            console.log(response)
+            console.log(response.data.id)
+            // response.data.orderPrice
+
+            let order = { orderId: response.data.id, amount: 1, phoneNumber: user.value.phoneNumber }
+            const mpesaResponse = await productStore.checkOut(order)
+
+            console.log(mpesaResponse, "Mpesa")
+
             loading.value = false
+
+
 
             toast.add({
                 severity: "success",
