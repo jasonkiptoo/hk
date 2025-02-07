@@ -82,6 +82,7 @@
 
 <script>
 import { useUserStore } from "@/stores/auth";
+import { useProductStore } from "@/stores/productStore";
 import Toast from 'primevue/toast';
 
 export default {
@@ -95,6 +96,7 @@ export default {
       isVerified: false,
       forgotPassword: false,
       userStore: useUserStore(),
+      productStore: useProductStore(),
     };
   },
   methods: {
@@ -126,9 +128,11 @@ export default {
           this.form.email,
           this.form.password
         );
+
         if (accessToken) {
           this.$router.push("/dashboard");
         }
+        // this.productStore.moveWishlistToCart()
       } catch (error) {
         if (error.message.includes("not yet verified")) {
           this.isVerified = true;

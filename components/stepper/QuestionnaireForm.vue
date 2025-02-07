@@ -96,7 +96,7 @@
                         </div>
                         <div class="font-bold">Years of Experience</div>
                         <div v-for="category in yearExperience" :key="category.key" class="flex items-center gap-2">
-                            <RadioButton v-model="businessType" :inputId="category.key" name="dynamic"
+                            <RadioButton v-model="businessType" :inputId="category.key" name="dynamic1"
                                 :value="category.name" />
                             <label :for="category.key">{{ category.name }}</label>
                         </div>

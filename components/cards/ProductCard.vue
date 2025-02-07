@@ -44,7 +44,7 @@
 
   <div class="border-r border-gray-200 rounded-lg p-4 text-center bg-white shadow-md relative group">
     <!-- New Tag -->
-    <Tag value="NEW" class="absolute top-2 left-2 bg-orange-500 text-white px-2 py-1 rounded-md text-xs" />
+    <!-- <Tag value="NEW" class="absolute top-2 left-2 bg-orange-500 text-white px-2 py-1 rounded-md text-xs" /> -->
 
     <!-- Product Image -->
     <img :src="item.image" class="h-32 mx-auto mb-2 transition-transform group-hover:scale-105" alt="Product Image" />
@@ -90,7 +90,7 @@
       <button @click="addToCart(item)" class="bg-white p-2 rounded-full shadow hover:bg-gray-100">
         <i class="pi pi-shopping-cart text-gray-600"></i>
       </button>
-      <button @click="wishProduct(item.id)" class="bg-white p-2 rounded-full shadow hover:bg-gray-100">
+      <button @click="wishProduct(item)" class="bg-white p-2 rounded-full shadow hover:bg-gray-100">
         <i class="pi pi-heart text-gray-600"></i>
       </button>
     </div>
@@ -176,8 +176,8 @@ function isInWishlist(productId) {
   return false;
 }
 
-const wishProduct = async productId => {
-  console.log(productId, "Attempting to add to wishlist");
+const wishProduct = async (product) => {
+  // console.log(productId, "Attempting to add to wishlist");
 
   const productStore = useProductStore(); // Access the store
   const userStore = useUserStore(); // Access the user store for authentication state
@@ -185,7 +185,7 @@ const wishProduct = async productId => {
   try {
     if (userStore.isLoggedIn) {
       // Logged-in user: Add to the server-side wishlist
-      const { res } = await productStore.addToWishlist(productId);
+      const { res } = await productStore.addToWishlist(product.id);
       await productStore.getWishList(); // Refresh wishlist from the server
 
       toast.add({
@@ -200,13 +200,14 @@ const wishProduct = async productId => {
 
       // Check if the product is already in the local wishlist
       const existingIndex = localWishlist.findIndex(
-        item => item.id === productId
+        item => item.id === product.id
       );
-
       if (existingIndex === -1) {
         // Product is not in the wishlist, add it
-        localWishlist.push({ id: productId });
+        localWishlist.push(product);
         localStorage.setItem("wishlist", JSON.stringify(localWishlist));
+
+        await productStore.getWishList();
 
         toast.add({
           severity: "success",
@@ -218,6 +219,7 @@ const wishProduct = async productId => {
         // Product is already in the wishlist, remove it
         localWishlist.splice(existingIndex, 1); // Remove the item from the array
         localStorage.setItem("wishlist", JSON.stringify(localWishlist));
+        await productStore.getWishList();
 
         toast.add({
           severity: "info",
@@ -242,11 +244,12 @@ const wishProduct = async productId => {
 
 const addToCart = async product => {
   const userStore = useUserStore();
+  console.log("Csdc", product)
 
   let user = userStore.user;
   try {
     const productStore = useProductStore(); // Access the store
-    const { response } = await productStore.addToCart(product.id, 1, user.id);
+    const { response } = await productStore.addToCart(product.id, 1);
 
     // Notify user on successful addition
     toast.add({

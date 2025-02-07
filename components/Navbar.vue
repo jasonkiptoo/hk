@@ -282,7 +282,7 @@ const checkUserLoggedIn = async () => {
       // Ensure wishId is an array and has a length
       if (Array.isArray(wishId) && wishId.length > 0) {
         for (let i = 0; i < wishId.length; i++) {
-          // wishProduct(wishId[i]); // Call wishProduct with each ID
+          wishProduct(wishId[i]); // Call wishProduct with each ID
         }
         localStorage.removeItem("wishlist"); // Clear wishlist from localStorage
       } else {
@@ -317,6 +317,16 @@ const getWishList = async () => {
   }
 };
 const wishProduct = async productId => {
+
+  const productStore = useProductStore(); // Access the store
+  const userStore = useUserStore(); // Access the user store for authentication state
+
+
+  const { res } = await productStore.addToWishlist(productId);
+  console.log(res, "Wishlist")
+  await productStore.getWishList();
+
+
   try {
     const { $axios } = useNuxtApp();
     const product = { productId: productId };

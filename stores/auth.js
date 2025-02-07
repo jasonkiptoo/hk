@@ -1,6 +1,6 @@
-import { defineStore } from 'pinia';
+import { defineStore } from "pinia";
 
-export const useUserStore = defineStore('user', {
+export const useUserStore = defineStore("user", {
   state: () => ({
     user: null, // Holds user data
     token: null, // Holds the authentication token
@@ -20,44 +20,54 @@ export const useUserStore = defineStore('user', {
           this.token = accessToken;
           this.refreshToken = refreshToken;
           // console.log(token,"token")
+          const productStore = useProductStore();
+          productStore.moveWishlistToCart()
 
           return { accessToken, user };
         } else {
           throw new Error("Invalid login credentials.");
         }
       } catch (error) {
-        throw new Error(error.response?.data?.error?.message || "Login failed.");
+        throw new Error(
+          error.response?.data?.error?.message || "Login failed."
+        );
       }
     },
 
     // Function to refresh the access token using the refresh token
-async  refreshAccessToken() {
-  // const refreshToken = localStorage.getItem('refreshToken');
-  // const userId = localStorage.getItem('userId');
-  
-  if (!refreshToken || !user) {
-    console.error("No refresh token or user ID found.");
-    return;
-  }
-  const { $axios } = useNuxtApp();
+    async refreshAccessToken() {
+      // const refreshToken = localStorage.getItem('refreshToken');
+      // const userId = localStorage.getItem('userId');
 
+      if (!refreshToken || !user) {
+        console.error("No refresh token or user ID found.");
+        return;
+      }
+      const { $axios } = useNuxtApp();
 
-  try {
-    const response = $axios.post('/auth/refresh', {
-        id: user.id,
-        refreshToken: refreshToken})
-    
+      try {
+        const response = $axios.post("/auth/refresh", {
+          id: user.id,
+          refreshToken: refreshToken,
+        });
+
         const { accessToken, user, refreshToken } = response.data;
 
-        console.log(response.data)
-this.token =accessToken
+        console.log(response.data);
+        this.token = accessToken;
+      } catch (error) {
+        console.error("Error refreshing token:", error);
+      }
+    },
 
-  } catch (error) {
-    console.error("Error refreshing token:", error);
-  }
-},
-
-    async register({ email, password, phoneNumber, lastName, firstName, roleId }) {
+    async register({
+      email,
+      password,
+      phoneNumber,
+      lastName,
+      firstName,
+      roleId,
+    }) {
       try {
         const { $axios } = useNuxtApp();
         const userData = {
@@ -75,17 +85,19 @@ this.token =accessToken
         // console.log(response.data, "resque user   ")
 
         return true;
-     
       } catch (error) {
         // console.error("Registration failed:", error.response?.data || error.message);
-        throw new Error(error.response?.data?.error?.message || "Registration failed.");
+        throw new Error(
+          error.response?.data?.error?.message || "Registration failed."
+        );
       }
     },
-    async verifyOtp({ email, otp, }) {
+    async verifyOtp({ email, otp }) {
       try {
         const { $axios } = useNuxtApp();
         const userData = {
-          email, otp
+          email,
+          otp,
         };
 
         const response = await $axios.post("/auth/verify", userData);
@@ -108,16 +120,24 @@ this.token =accessToken
       this.user = null;
       this.token = null;
 
+      const userStore = useUserStore();
+      const productStore = useProductStore();
+
+      // Clear user and token data from the store
+      userStore.$reset(); // Reset userStore state
+      productStore.$reset(); // Reset productStore state
+
       // Clear localStorage or any persistent storage
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem('user');
-        localStorage.removeItem('token');
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("user");
+        localStorage.removeItem("token");
+        localStorage.removeItem("product");
       }
 
       // Optional: Navigate to the auth page
       const { $router } = useNuxtApp();
       if ($router) {
-        $router.push('/auth');
+        $router.push("/auth");
       }
     },
   },
@@ -127,6 +147,6 @@ this.token =accessToken
   },
 
   persist: {
-    storage: typeof window !== 'undefined' ? localStorage : undefined,
+    storage: typeof window !== "undefined" ? localStorage : undefined,
   },
 });
