@@ -1,18 +1,27 @@
 <template>
   <div class="cart">
-    <div class="flex flex-col items-center justify-center bg-white shadow-lg rounded-lg p-6 mb-6 container mx-auto"
-      v-if="cartItems.length < 1">
-      <img src="@/assets/images/empty-cart.png" alt="Empty Cart" class="w-20 h-20 mb-4" />
+    <div
+      class="flex flex-col items-center justify-center bg-white shadow-lg rounded-lg p-6 mb-6 container mx-auto"
+      v-if="cartItems.length < 1"
+    >
+      <img
+        src="@/assets/images/empty-cart.png"
+        alt="Empty Cart"
+        class="w-20 h-20 mb-4"
+      />
       <h2 class="text-xl font-semibold text-gray-700">Your cart is empty!</h2>
-      <p class="text-gray-500 text-sm mb-4">Browse our categories and discover our best deals!</p>
+      <p class="text-gray-500 text-sm mb-4">
+        Browse our categories and discover our best deals!
+      </p>
       <NuxtLink to="/">
-        <button class="bg-primary hover:bg-orange-600 text-white font-semibold px-4 py-2 rounded">
+        <button
+          class="bg-primary hover:bg-orange-600 text-white font-semibold px-4 py-2 rounded"
+        >
           Start Shopping
         </button>
       </NuxtLink>
     </div>
     <div v-else>
-
       <table class="responsive-table container mx-auto">
         <thead>
           <tr>
@@ -26,32 +35,49 @@
         <tbody>
           <tr v-for="item in cartItems" :key="item.id">
             <td>
-              <img :src="item.productModel.images.find(image => image.isPrimary)?.optimizeUrl" alt="Product Image" />
-              {{ item.productModel.name }}
+              <img
+                :src="
+                  item.productModel?.images.find(image => image.isPrimary)
+                    ?.optimizeUrl ??
+                  item.images?.find(image => image.isPrimary)?.optimizeUrl
+                "
+                alt="Product Image"
+              />
+              {{ item.productModel?.name ?? item.name }}
             </td>
             <td>
               KES
-              {{ formattedPrice(item.productModel?.price) }}
+              {{ formattedPrice(item.productModel?.price ?? item.price) }}
             </td>
             <td>
-              <input type="number" v-model.number="item.quantity"
+              <input
+                type="number"
+                v-model.number="item.quantity"
                 class="w-16 border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-gray-500"
-                @change="updateQuantity(item.id, item.quantity)" min="1" />
+                @change="updateQuantity(item.id, item.quantity)"
+                min="1"
+              />
             </td>
             <td>
               KES
-
-              {{ formattedPrice(item.productModel.price * item.quantity) }}
+              {{
+                formattedPrice(
+                  item.productModel?.price ?? item.price * item.quantity
+                )
+              }}
             </td>
             <td>
-              <button @click="removeItem(item)" style="
+              <button
+                @click="removeItem(item)"
+                style="
                   background-color: #2869a5;
                   color: white;
                   border: none;
                   padding: 5px 10px;
                   border-radius: 4px;
                   cursor: pointer;
-                ">
+                "
+              >
                 Remove
               </button>
             </td>
@@ -73,7 +99,6 @@
         </div>
       </div>
     </div>
-
 
     <div class="cart-actions">
       <!-- <div class="coupon">

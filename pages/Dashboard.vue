@@ -243,7 +243,7 @@ export default {
       fetching.value = true;
 
       const defaultImage =
-        "https://media.istockphoto.com/id/1977230951/photo/cctv-camera-installed-on-wall-of-the-building.jpg?s=612x612&w=0&k=20&c=f-Nw4cMVtYRU5Wo5D_625XfSU694lt-pSMx35RtyeiI=";
+        "https://www.shutterstock.com/shutterstock/photos/2059817444/display_1500/stock-vector-no-image-available-photo-coming-soon-illustration-vector-2059817444.jpg";
 
       try {
         const { $axios } = useNuxtApp();

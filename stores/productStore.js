@@ -23,17 +23,24 @@ export const useProductStore = defineStore("product", {
 
         this.cartItems = response.data; // Update the cart items
         this.cartCount = response.data.length; // Update the cart item count
-        console.log(response.data);
-
         // Calculate the cart total (assuming each product has a price property)
         this.cartTotal = response.data.reduce(
           (total, item) => total + item.quantity * item.productModel.price,
           0
         );
       } catch (error) {
-        console.error("Error fetching cart items:", error);
+        console.error("Error fetching wishlist:", error);
+        // Fallback to localStorage if no response
+        const localWishlist = JSON.parse(localStorage.getItem("cart")) || [];
+        this.cartItems = localWishlist;
+        this.cartCount = localWishlist.length;
+        this.cartTotal = localWishlist.reduce(
+          (total, item) => total + item.quantity * item.price,
+          0
+        );
       }
     },
+
     async getProducts() {
       try {
         const { $axios } = useNuxtApp();
@@ -55,51 +62,39 @@ export const useProductStore = defineStore("product", {
     },
 
     // Add a product to the cart
-    async addToCart(productModelId, quantity) {
+    async addToCart(product, quantity) {
+      console.log("Add to cart", product);
       const userStore = useUserStore();
 
       let user = userStore.user;
       try {
         const { $axios } = useNuxtApp();
-
-        console.log("Product",userStore.isLoggedIn)
-        // If the user is logged in, send a request to the API
         if (userStore.isLoggedIn) {
           const response = await $axios.post("/product/cart/add", {
-            productModelId,
+            productModelId: product.id,
             quantity,
             userId: user.id,
           });
-          await this.getCartItems();
-          this.cartCount = this.cartItems.length;
+          this.getCartItems();
           return response;
-
         } else {
           console.warn(
             "User is not logged in. Adding product to localStorage cart."
           );
-
-          // Retrieve existing cart from localStorage or initialize an empty array
           const localCart = JSON.parse(localStorage.getItem("cart")) || [];
-
-          // Check if the product already exists in the cart
-          const existingItem = localCart.find(
-            (item) => item.id === productModelId
-          );
-
+          const existingItem = localCart.find(item => item.id === product.id);
           if (existingItem) {
             existingItem.quantity += quantity; // Update quantity if already exists
+            await this.getCartItems();
           } else {
-            localCart.push({ id: productModelId, quantity }); // Add new item
+            localCart.push({ ...product, quantity }); // Add new item
+            await this.getCartItems();
           }
-
-          // Save updated cart to localStorage
           localStorage.setItem("cart", JSON.stringify(localCart));
-
-          console.log("Product added to localStorage cart.");
+          await this.getCartItems();
         }
       } catch (error) {
-        console.error("Error adding to cart:", error);
+        console.error("Error adding to wishlist:", error);
       }
     },
     async getOrders() {
@@ -155,6 +150,38 @@ export const useProductStore = defineStore("product", {
         this.wishListCount = localWishlist.length;
       }
     },
+
+    async moveCartLive() {
+      const userStore = useUserStore();
+      if (!userStore.isLoggedIn) {
+        console.log("User is not logged in. Cannot move wishlist items.");
+        return;
+      }
+
+      if (typeof window !== "undefined") {
+        const storedWishlist = localStorage.getItem("cart");
+        const wishIds = storedWishlist ? JSON.parse(storedWishlist) : [];
+        console.log("cdcs", wishIds);
+
+        if (Array.isArray(wishIds) && wishIds.length > 0) {
+          try {
+            for (let productModel of wishIds) {
+              const quantity = productModel?.quantity || 1;
+              await this.addToCart(productModel, quantity);
+            }
+            this.getCartItems();
+            localStorage.removeItem("cart"); // Clear wishlist from localStorage
+         
+          } catch (error) {
+            console.error("Error moving cart", error);
+          }
+        } else {
+          console.log("No items in localStorage wishlist to move.");
+        }
+      } else {
+        console.error("LocalStorage is not available.");
+      }
+    },
     async moveWishlistToCart() {
       const userStore = useUserStore();
       console.log("moveWishlistToCart");
@@ -170,7 +197,9 @@ export const useProductStore = defineStore("product", {
         if (Array.isArray(wishIds) && wishIds.length > 0) {
           try {
             for (let productModelId of wishIds) {
-              await this.addToCart(productModelId, 1, userStore.user.id);
+              console.log("cs", productModelId);
+              // await this.addToCart(productModelId, 1, userStore.user.id);
+              await this.addToWishlist(productModelId.id);
             }
             this.getWishList();
             this.getCartItems();
@@ -201,7 +230,7 @@ export const useProductStore = defineStore("product", {
           // Update wishlist count and persist to localStorage
           this.wishListCount = this.wishListItems.length;
           localStorage.setItem("wishlist", JSON.stringify(this.wishListItems));
-          return { res }; // Return the response for further actions
+          return res; // Return the response for further actions
         }
       } catch (error) {
         if (error.response?.status === 401) {
@@ -213,8 +242,8 @@ export const useProductStore = defineStore("product", {
             JSON.parse(localStorage.getItem("wishlist")) || [];
 
           // Prevent duplicate entries
-          if (!localWishlist.some((item) => item.id === productId)) {
-            localWishlist.push({ id: productId });
+          if (!localWishlist.some(item => item.id === productModelId)) {
+            localWishlist.push({ id: productModelId });
             localStorage.setItem("wishlist", JSON.stringify(localWishlist));
 
             console.log("Product added to localStorage wishlist.");
@@ -229,19 +258,32 @@ export const useProductStore = defineStore("product", {
     // Remove a product from the wishlist
     async removeFromWishlist(productId) {
       console.log("productId", productId);
+      const userStore = useUserStore();
+
       try {
         const { $axios } = useNuxtApp();
-        await $axios.delete(`/product/wishlist/remove/${productId}`);
 
-        // Remove item from wishlist
+        // Get wishlist from localStorage
+        let localWishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+        // Check and remove from localWishlist
+        const localIndex = localWishlist.findIndex(
+          item => item.id === productId
+        );
+        if (localIndex !== -1) {
+          localWishlist.splice(localIndex, 1);
+          localStorage.setItem("wishlist", JSON.stringify(localWishlist));
+        }
+        if (userStore.isLoggedIn) {
+          await $axios.delete(`/product/wishlist/remove/${productId}`);
+        }
+        await this.getWishList();
         const index = this.wishListItems.findIndex(
-          (item) => item.id === productId
+          item => item.id === productId
         );
         if (index !== -1) {
           this.wishListItems.splice(index, 1);
         }
-
-        this.wishListCount = this.wishListItems.length; // Update wishlist count
+        this.wishListCount = this.wishListItems.length;
       } catch (error) {
         console.error("Error removing from wishlist:", error);
       }
@@ -251,7 +293,7 @@ export const useProductStore = defineStore("product", {
       try {
         const { $axios } = useNuxtApp();
         const orderData = {
-          products: this.cartItems.map((item) => ({
+          products: this.cartItems.map(item => ({
             productModelId: item.productModel.id,
             quantity: item.quantity,
           })),
@@ -301,16 +343,16 @@ export const useProductStore = defineStore("product", {
 
   getters: {
     // Getter for cart item count
-    getCartCount: (state) => state.cartCount,
+    getCartCount: state => state.cartCount,
 
     // Getter for wishlist item count
-    getWishListCount: (state) => state.wishListCount,
+    getWishListCount: state => state.wishListCount,
 
     // Getter for cart total value
-    getCartTotal: (state) => state.cartTotal,
-    getCategoriesList: (state) => state.categories,
-    getProductList: (state) => state.products,
-    getOrdersList: (state) => state.orders,
+    getCartTotal: state => state.cartTotal,
+    getCategoriesList: state => state.categories,
+    getProductList: state => state.products,
+    getOrdersList: state => state.orders,
   },
 
   persist: {

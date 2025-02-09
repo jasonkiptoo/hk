@@ -22,6 +22,10 @@ export const useUserStore = defineStore("user", {
           // console.log(token,"token")
           const productStore = useProductStore();
           productStore.moveWishlistToCart()
+          productStore.moveCartLive()
+
+          productStore.getWishList()
+          productStore.getCartItems()
 
           return { accessToken, user };
         } else {
