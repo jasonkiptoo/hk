@@ -13,7 +13,7 @@
         </div>
       </div>
 
-      <div class="border rounded-lg border-orange-600 w-3/4 p-3">
+      <div class="border rounded-lg border-primary w-3/4 p-3">
         <h2 class="text-xl font-bold mb-4">Trending Products</h2>
         <Carousel
           :d_circular="true"
@@ -46,14 +46,14 @@
                 <div class="font-medium text-center mb-2">
                   {{ product.name }}
                 </div>
-                <div class="font-semibold text-xl text-center text-orange-600">
+                <div class="font-semibold text-xl text-center text-primary">
                   {{ product.price }}
                 </div>
                 <div class="stock text-sm text-gray-600 mt-4">
                   <div class="relative">
-                    <div class="h-2 bg-gray-300 rounded">
+                    <div class="h-2 bg-primary rounded">
                       <div
-                        class="h-2 bg-orange-500 rounded"
+                        class="h-2 bg-primary rounded"
                         style="width: 65%"
                       ></div>
                     </div>

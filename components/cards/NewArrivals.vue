@@ -25,7 +25,7 @@
 
     <!-- Product Carousel -->
     <Carousel
-      :value="filteredProducts"
+      :value="productsWithRecent"
       :numVisible="5"
       :numScroll="1"
       class="mt-4"
@@ -51,8 +51,12 @@
 
           <!-- Product Name -->
           <div class="flex flex-col items-center text-center p-2">
-            <h3 class="text-sm font-medium truncate">
-              {{ slotProps.data.name }}
+            <h3 class="text-md font-medium truncate">
+              {{ slotProps.data.product.name }}
+              <br />
+              <span class="text-sm font-regular">
+                {{ slotProps.data.name }}
+              </span>
             </h3>
 
             <!-- Rating -->
@@ -65,14 +69,14 @@
                   }"
                 ></i>
               </span>
-              <span class="text-gray-500 ml-2"
+              <!-- <span class="text-gray-500 ml-2"
                 >({{ slotProps.data.reviews }})</span
-              >
+              > -->
             </div>
 
             <!-- Price -->
             <p class="text-red-500 font-semibold">
-              {{ formattedPrice(slotProps.data.price) }} -
+              {{ formattedPrice(slotProps.data.price) }}
               <span class="line-through text-gray-400">{{
                 formattedPrice(slotProps.data.oldPrice)
               }}</span>
@@ -123,31 +127,33 @@ onMounted(async () => {
 
 // Computed property for processing product data
 const productsWithRecent = computed(() => {
-  return store.products.flatMap(product =>
-    product.models.map(model => ({
-      id: model.id,
-      name: `${product.name} - ${model.name}`, // Include both product and model names
-      category: "Recent",
-      subCategory: product.subCategory,
-      price: model.price,
-      oldPrice: model.price * 1.2, // Example discount (modify as needed)
-      rating: 4, // You can modify this based on real data
-      reviews: 10, // Example static review count
-      image:
-        model.images.find(img => img.isPrimary)?.uploadUrl ||
-        "default-image.jpg",
-    }))
-  );
+  return store.products;
+
+  // product =>
+  //   product.map(model => ({
+  //     id: model.id,
+  //     name: `${product.name} - ${model.name}`, // Include both product and model names
+  //     category: "Recent",
+  //     subCategory: product.subCategory,
+  //     price: model.price,
+  //     oldPrice: model.price * 1.2, // Example discount (modify as needed)
+  //     rating: 4, // You can modify this based on real data
+  //     reviews: 10, // Example static review count
+  //     image:
+  //       model.images.find(img => img.isPrimary)?.uploadUrl ||
+  //       "default-image.jpg",
+  //   }))
+  //
 });
 
 // Filtered products based on selected tab
-const filteredProducts = computed(() =>
-  productsWithRecent.value.filter(
-    product =>
-      product.subCategory.category.name === selectedTab.value ||
-      selectedTab.value === "Recent"
-  )
-);
+// const filteredProducts = computed(() =>
+//   productsWithRecent.value.filter(
+//     product =>
+//       product.subCategory.category.name === selectedTab.value ||
+//       selectedTab.value === "Recent"
+//   )
+// );
 </script>
 
 <style scoped>
