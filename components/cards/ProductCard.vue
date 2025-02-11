@@ -56,13 +56,14 @@
     />
 
     <!-- Product Name -->
-    <div class="flex flex-col text-start p-2">
-      <h3 class="text-sm font-medium truncate" @click="goToProductPage(item)">
-        {{ item.name }}
+    <div class="flex flex-col text-center p-2">
+      <h3 class="text-sm font-regular truncate" @click="goToProductPage(item)">
+        {{ item.product.name }} <br />
+        <span class="font-medium text-sm"> ({{ item.name }})</span>
       </h3>
 
       <!-- Rating -->
-      <div class="flex justify-start mt-">
+      <div class="flex justify-center mt-">
         <span v-for="star in 5" :key="star" class="text-yellow-400">
           <i
             :class="{
@@ -96,8 +97,8 @@
       </div>
 
       <!-- Price -->
-      <p class="text-red-500 font-semibold text-start">
-        KES {{ formattedPrice(item.price) }}
+      <p class="text-red-500 font-semibold text-center">
+        Ksh {{ formattedPrice(item.price) }}
         <!-- <span class="line-through text-gray-400">{{ formattedPrice(item.oldPrice) }}</span> -->
       </p>
     </div>

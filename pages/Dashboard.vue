@@ -87,7 +87,7 @@
         <FilterCard v-if="filter" />
         <!-- Right Section -->
         <div class="w-full">
-          <div v-if="fetching" class="text-center mt-6">
+          <div v-if="fetching && products.length < 1" class="text-center mt-6">
             <div class="relative flex justify-center items-center">
               <div
                 class="absolute animate-spin rounded-full h-32 w-32 border-t-4 border-b-4 border-purple-100"
@@ -100,7 +100,7 @@
           </div>
 
           <div
-            v-else-if="products.length === 0 && !fetching"
+            v-else-if="products.length == 0"
             class="flex flex-col items-center justify-center text-center mt-12 text-gray-500"
           >
             <img
@@ -123,7 +123,20 @@
           </div>
 
           <div class="flex justify-center py-8" v-if="products.length != 0">
-            <button class="bg-red-500 text-white px-4 py-2">Show More</button>
+            <!-- <button
+              :loading="fetching"
+              @click="showMoreProducts()"
+              class="bg-red-500 text-white px-4 py-2"
+            >
+              Show More
+            </button> -->
+            <Button
+              type="button"
+              label="Show More"
+              icon="pi pi-sync"
+              :loading="fetchingMore"
+              @click="showMoreProducts()"
+            />
           </div>
         </div>
       </div>
@@ -175,10 +188,15 @@ export default {
       // ProductService.getProductsSmall().then((data) => (products.value = data.slice(0, 9)));
       //  timer.value = setInterval(updateTime(), 1000);
     });
+    const currentPage = ref(1);
+    const totalPages = ref(1); // Track total pages
+
     // const emit = defineEmits(["refresh"]);
     const filter = ref(false);
     const value = ref([20, 80]);
     const fetching = ref(false);
+    const fetchingMore = ref(false);
+
     const timeLeft = ref({
       days: "00",
       hours: "00",
@@ -227,6 +245,10 @@ export default {
     const nextSlide = () => {
       currentIndex.value = (currentIndex.value + 1) % images.value.length;
     };
+    const showMoreProducts = () => {
+      currentPage.value++;
+      getProduct();
+    };
     const prevSlide = () => {
       currentIndex.value =
         (currentIndex.value - 1 + images.value.length) % images.value.length;
@@ -241,7 +263,7 @@ export default {
     };
     const getProduct = async () => {
       fetching.value = true;
-
+      fetchingMore.value = true;
       const defaultImage =
         "https://www.shutterstock.com/shutterstock/photos/2059817444/display_1500/stock-vector-no-image-available-photo-coming-soon-illustration-vector-2059817444.jpg";
 
@@ -254,31 +276,21 @@ export default {
           params.searchTerm = props.searchTerm;
         }
 
-        const response = await $axios.get("/product", { params });
-
-        console.log(response, "data");
+        const response = await $axios.get("/product/product-models", {
+          params: {
+            ...params, // Preserve existing params
+            page: currentPage.value,
+            limit: 10, // Set your desired limit
+          },
+        });
 
         fetching.value = false;
-
-        // Process models and attach correct images
-        const modelsWithImages = response.data
-          .map(product => product.models)
-          .flat()
-          .map(model => {
-            let primaryImage = model.images?.find(
-              img => img.isPrimary
-            )?.uploadUrl;
-
-            return {
-              ...model,
-              image: primaryImage || defaultImage, // Use primary image or fallback
-            };
-          });
-
-        products.value = modelsWithImages;
+        fetchingMore.value = false;
+        products.value = [...products.value, ...response.data.results];
       } catch (error) {
         console.error("Error fetching products:", error);
         fetching.value = false;
+        fetchingMore.value = false;
       }
     };
 
@@ -343,6 +355,9 @@ export default {
       getSeverity,
       value,
       filter,
+      showMoreProducts,
+      fetching,
+      fetchingMore,
     };
   },
 };

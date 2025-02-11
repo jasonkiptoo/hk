@@ -60,15 +60,18 @@
               <i class="pi pi-trash"></i>
             </button>
           </div>
-
           <div class="p-4">
-            <h3 class="text-lg font-semibold truncate">
-              {{ item.productModel?.name ?? item.name }}
+            <h3 class="text-md font-semibold truncate">
+              {{ item.productModel?.name ?? item?.product.name }}
+              <br />
+              <span class="text-sm font-light">
+                {{ item.productModel?.name ?? item?.name }}
+              </span>
             </h3>
 
             <p class="text-gray-500 mb-2">
               <span class="text-red-500 font-bold">
-                KES {{ formattedPrice(item.productModel?.price ?? item.price) }}
+                Ksh {{ formattedPrice(item.productModel?.price ?? item.price) }}
               </span>
 
               <span
