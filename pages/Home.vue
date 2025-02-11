@@ -32,11 +32,13 @@
             </div>
           </div>
         </div>
-        <button
-          class="px-6 py-3 bg-primary text-white rounded-lg shadow-lg hover:bg-orange-600"
-        >
-          SHOP NOW →
-        </button>
+        <NuxtLink to="/dashboard">
+          <button
+            class="px-6 py-3 bg-primary text-white rounded-lg shadow-lg hover:bg-seconary"
+          >
+            SHOP NOW →
+          </button>
+        </NuxtLink>
       </div>
       <!-- Dynamic Image Section -->
       <div
