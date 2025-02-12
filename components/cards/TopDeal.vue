@@ -121,14 +121,16 @@
                         }"
                       ></i>
                     </span>
-                    <span class="text-gray-500 ml-2">({{ item.reviews }})</span>
+                    <!-- <span class="text-gray-500 ml-2">({{ item.reviews }})</span> -->
                   </div>
                   <h3 class="text-lg font-medium">{{ item.name }}</h3>
                   <div class="mt-2 text-primary font-bold text-lg">
-                    <span class="line-through text-gray-400"
-                      >${{ item.oldPrice }}</span
+                    <!-- <span class="line-through text-gray-400">{{
+                      item.oldPrice
+                    }}</span> -->
+                    <span class="ml-2"
+                      >Ksh {{ formattedPrice(item.price) }}</span
                     >
-                    <span class="ml-2">${{ item.price }}</span>
                   </div>
                   <p class="text-gray-500 mt-1">
                     Available: <strong>{{ item.stock }}</strong>
@@ -163,14 +165,16 @@
                         }"
                       ></i>
                     </span>
-                    <span class="text-gray-500 ml-2">({{ item.reviews }})</span>
+                    <!-- <span class="text-gray-500 ml-2">({{ item.reviews }})</span> -->
                   </div>
                   <h3 class="text-lg font-medium">{{ item.name }}</h3>
                   <div class="mt-2 text-orange-500 font-bold text-lg">
                     <span class="line-through text-gray-400"
-                      >${{ item.oldPrice }}</span
+                      >Ksh {{ item.oldPrice }}</span
                     >
-                    <span class="ml-2">${{ item.price }}</span>
+                    <span class="ml-2"
+                      >Ksh{{ formattedPrice(item.price) }}</span
+                    >
                   </div>
                   <p class="text-gray-500 mt-1">
                     Available: <strong>{{ item.stock }}</strong>
@@ -208,14 +212,16 @@
                         }"
                       ></i>
                     </span>
-                    <span class="text-gray-500 ml-2">({{ item.reviews }})</span>
+                    <!-- <span class="text-gray-500 ml-2">({{ item.reviews }})</span> -->
                   </div>
-                  <h3 class="text-lg font-medium">{{ item.name }}</h3>
+                  <h3 class="text-lg font-medium truncate">{{ item.name }}</h3>
                   <div class="mt-2 text-orange-500 font-bold text-lg">
-                    <span class="line-through text-gray-400"
+                    <!-- <span class="line-through text-gray-400"
                       >${{ item.oldPrice }}</span
+                    > -->
+                    <span class="ml-2"
+                      >Ksh{{ formattedPrice(item.price) }}</span
                     >
-                    <span class="ml-2">${{ item.price }}</span>
                   </div>
                   <p class="text-gray-500 mt-1">
                     Available: <strong>{{ item.stock }}</strong>
@@ -239,6 +245,7 @@
 <script>
 import { ref } from "vue";
 import Carousel from "primevue/carousel";
+import { useProductStore } from "@/stores/productStore";
 
 export default {
   components: { Carousel },
@@ -271,61 +278,15 @@ export default {
         price: 2153,
       },
     ]);
+    const { $formatPrice } = useNuxtApp();
+    const productStore = useProductStore();
+    const formattedPrice = price => {
+      return $formatPrice(price);
+    };
 
-    const featuredProducts = ref([
-      {
-        image:
-          "https://html.themexriver.com/radios/assets/img/product/img_53.png",
-        name: "Aroma Housewares 4-Cups 1Qt",
-        rating: 3,
-        reviews: 26,
-        oldPrice: 28.52,
-        price: 30.52,
-        stock: 180,
-      },
-      {
-        image:
-          "https://html.themexriver.com/radios/assets/img/product/img_53.png",
-        name: "Panasonic Cordless Phone System",
-        rating: 3,
-        reviews: 26,
-        oldPrice: 28.52,
-        price: 30.52,
-        stock: 180,
-      },
-      {
-        image:
-          "https://html.themexriver.com/radios/assets/img/product/img_53.png",
-        name: "Olive Oil With Masala",
-        rating: 4,
-        reviews: 34,
-        oldPrice: 28.52,
-        price: 30.52,
-        stock: 180,
-      },
-      {
-        image:
-          "https://html.themexriver.com/radios/assets/img/product/img_53.png",
-        name: "Amazon Basics Window Air Conditioner",
-        rating: 3,
-        reviews: 26,
-        oldPrice: 28.52,
-        price: 30.52,
-        stock: 180,
-      },
-      {
-        image:
-          "https://html.themexriver.com/radios/assets/img/product/img_53.png",
-        name: "Amazon Basics Window Air Conditioner",
-        rating: 3,
-        reviews: 26,
-        oldPrice: 28.52,
-        price: 30.52,
-        stock: 180,
-      },
-    ]);
+    const featuredProducts = computed(() => productStore.products);
 
-    return { products, featuredProducts, carousel, tabs };
+    return { products, featuredProducts, carousel, tabs, formattedPrice };
   },
 };
 </script>

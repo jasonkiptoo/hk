@@ -4,7 +4,7 @@
       <!-- Mobile Layout (Menu, Search, Logo in One Row) -->
       <div class="md:hidden flex items-center justify-between w-full">
         <!-- Logo (Align Right) -->
-        <NuxtLink to="/">
+        <NuxtLink to="/dashboard">
           <img
             src="@/assets/images/logoo.png"
             alt="Hikvision Logo"
@@ -51,7 +51,7 @@
       <!-- Desktop Layout (Hidden on Mobile) -->
       <div class="hidden md:flex items-center">
         <div class="mr-auto md:w-48 flex-shrink-0">
-          <NuxtLink to="/">
+          <NuxtLink to="/dashboard">
             <img
               src="@/assets/images/logoo.png"
               alt="Hikvision Logo"
@@ -286,11 +286,10 @@ const searchItems = async event => {
 
     const defaultImage =
       "https://www.shutterstock.com/shutterstock/photos/2059817444/display_1500/stock-vector-no-image-available-photo-coming-soon-illustration-vector-2059817444.jpg";
-
     filteredItems.value = response.data.results.flatMap(product =>
       product.models.map(model => ({
         id: model.id, // Now using the model's ID
-        name: model.name,
+        name: `${product.name} - (${model.name})`,
         images:
           model.images.length > 0
             ? model.images.map(img => img.autoCropUrl)

@@ -12,6 +12,7 @@ export const useProductStore = defineStore("product", {
     categories: [],
     products: [],
     orders: [],
+    models: [],
   }),
 
   actions: {
@@ -46,6 +47,15 @@ export const useProductStore = defineStore("product", {
         const { $axios } = useNuxtApp();
         const response = await $axios.get("/product/product-models");
         this.products = response.data.results // Update the cart items
+      } catch (error) {
+        console.error("Error fetching cart items:", error);
+      }
+    },
+     async getModels() {
+      try {
+        const { $axios } = useNuxtApp();
+        const response = await $axios.get("/product/product-models");
+        this.models = response.data.results // Update the cart items
       } catch (error) {
         console.error("Error fetching cart items:", error);
       }
@@ -351,6 +361,7 @@ export const useProductStore = defineStore("product", {
     getCartTotal: state => state.cartTotal,
     getCategoriesList: state => state.categories,
     getProductList: state => state.products,
+    getModelsList: state => state.models,
     getOrdersList: state => state.orders,
   },
 

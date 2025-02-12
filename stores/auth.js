@@ -3,29 +3,54 @@ import { defineStore } from "pinia";
 export const useUserStore = defineStore("user", {
   state: () => ({
     user: null, // Holds user data
-    token: null, // Holds the authentication token
-    refreshToken: null, // Holds the refresh token
+    accessToken: null, // Holds the authentication accessToken
+    refreshToken: null,
+    accessTokenExpiresAt: null,
+    refreshTokenExpiresAt: null,
   }),
 
   actions: {
+    setTokens(response) {
+      const {
+        accessToken,
+        refreshToken,
+        accessTokenExpiresAt,
+        refreshTokenExpiresAt,
+        user,
+      } = response
+      this.user = user;
+      this.accessToken = accessToken;
+      this.refreshToken = refreshToken;
+      this.accessTokenExpiresAt = accessTokenExpiresAt;
+      this.refreshTokenExpiresAt = refreshTokenExpiresAt;
+    },
     async login(email, password) {
       try {
         const { $axios } = useNuxtApp();
 
         const response = await $axios.post("/user/login", { email, password });
-        const { accessToken, user, refreshToken } = response.data;
+        const {
+          accessToken,
+          user,
+          refreshToken,
+          refreshTokenExpiresAt,
+          accessTokenExpiresAt,
+        } = response.data;
 
         if (accessToken && user) {
           this.user = user;
-          this.token = accessToken;
+          this.accessToken = accessToken;
           this.refreshToken = refreshToken;
-          // console.log(token,"token")
-          const productStore = useProductStore();
-          productStore.moveWishlistToCart()
-          productStore.moveCartLive()
+          this.accessTokenExpiresAt = accessTokenExpiresAt;
+          this.refreshTokenExpiresAt = refreshTokenExpiresAt;
 
-          productStore.getWishList()
-          productStore.getCartItems()
+          // console.log(accessToken,"accessToken")
+          const productStore = useProductStore();
+          productStore.moveWishlistToCart();
+          productStore.moveCartLive();
+
+          productStore.getWishList();
+          productStore.getCartItems();
 
           return { accessToken, user };
         } else {
@@ -38,32 +63,34 @@ export const useUserStore = defineStore("user", {
       }
     },
 
-    // Function to refresh the access token using the refresh token
+    // Function to refresh the access accessToken using the refresh accessToken
     async refreshAccessToken() {
-      // const refreshToken = localStorage.getItem('refreshToken');
-      // const userId = localStorage.getItem('userId');
-
-      if (!refreshToken || !user) {
-        console.error("No refresh token or user ID found.");
+      if (!this.refreshToken || !this.user) {
+        console.error("No refresh accessToken or user ID found.");
         return;
       }
+
       const { $axios } = useNuxtApp();
 
       try {
-        const response = $axios.post("/auth/refresh", {
-          id: user.id,
-          refreshToken: refreshToken,
+        const response = await $axios.post("/auth/refresh", {
+          id: this.user.id,
+          refreshToken: this.refreshToken,
         });
 
-        const { accessToken, user, refreshToken } = response.data;
+        const { accessToken, refreshToken } = response.data;
 
-        console.log(response.data);
-        this.token = accessToken;
+        if (accessToken) {
+          this.accessToken = accessToken;
+          this.refreshToken = refreshToken; // Update refreshToken
+        } else {
+          console.error("Failed to refresh access accessToken.");
+        }
       } catch (error) {
-        console.error("Error refreshing token:", error);
+        console.error("Error refreshing accessToken:", error);
+        this.logout(); // Log out if accessToken refresh fails
       }
     },
-
     async register({
       email,
       password,
@@ -109,7 +136,7 @@ export const useUserStore = defineStore("user", {
         const { accessToken, user } = response.data;
         if (accessToken && user) {
           this.user = user;
-          this.token = accessToken;
+          this.accessToken = accessToken;
           return { accessToken, user };
         } else {
           throw new Error("Registration failed.");
@@ -120,21 +147,21 @@ export const useUserStore = defineStore("user", {
     },
 
     logout() {
-      // Clear user and token data from the store
+      // Clear user and accessToken data from the store
       this.user = null;
-      this.token = null;
+      this.accessToken = null;
 
       const userStore = useUserStore();
       const productStore = useProductStore();
 
-      // Clear user and token data from the store
+      // Clear user and accessToken data from the store
       userStore.$reset(); // Reset userStore state
       productStore.$reset(); // Reset productStore state
 
       // Clear localStorage or any persistent storage
       if (typeof window !== "undefined") {
         localStorage.removeItem("user");
-        localStorage.removeItem("token");
+        localStorage.removeItem("accessToken");
         localStorage.removeItem("product");
       }
 
@@ -147,7 +174,7 @@ export const useUserStore = defineStore("user", {
   },
 
   getters: {
-    isLoggedIn: (state) => state.token !== null,
+    isLoggedIn: state => state.accessToken !== null,
   },
 
   persist: {

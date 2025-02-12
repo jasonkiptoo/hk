@@ -84,8 +84,8 @@
                 <div class="mb-4">
                   <div class="relative mx-auto">
                     <img
-                      :src="slotProps.data.image"
-                      :alt="slotProps.data.name"
+                      :src="slotProps.data?.image"
+                      :alt="slotProps.data?.name"
                       class="object-cover rounded"
                       style="max-width: 100%"
                     />
@@ -99,7 +99,7 @@
                 </div>
 
                 <div class="mb-4 font-medium flex justify-around">
-                  {{ slotProps.data.name }}
+                  {{ slotProps.data?.name }}
                 </div>
                 <div
                   class="flex justify-between items-center flex justify-around"
