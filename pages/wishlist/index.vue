@@ -78,14 +78,14 @@
                 v-if="item?.originalPrice"
                 class="line-through text-sm ml-2 text-gray-400"
               >
-                KES{{ item?.originalPrice }}
+                Ksh{{ item?.originalPrice }}
               </span>
             </p>
             <button
               class="w-full bg-black text-white py-2 rounded hover:bg-gray-800"
               @click="addToCart(item)"
             >
-              Add To Cart
+              Move To Cart
             </button>
           </div>
         </div>
@@ -209,8 +209,6 @@ export default {
     };
 
     const removeFromWishlist = async item => {
-      console.log("cdcs item", item);
-      // const productId = wishList.value[index].productModel.id;
       await productStore.removeFromWishlist(item.id);
     };
 
@@ -219,6 +217,7 @@ export default {
 
       console.log(productId, "productId");
       // let user = userStore.user;
+      console.log(product, "tes");
       try {
         const response = await productStore.addToCart(product, 1);
 

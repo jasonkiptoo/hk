@@ -1,7 +1,7 @@
 <template>
   <div class="cart">
     <div
-      class="flex flex-col items-center justify-center bg-white shadow-lg rounded-lg p-6 mb-6 container mx-auto"
+      class="flex flex-col items-center justify-center bg-white rounded-lg p-6 mb-6 container mx-auto"
       v-if="cartItems.length < 1"
     >
       <img
@@ -21,91 +21,134 @@
         </button>
       </NuxtLink>
     </div>
-    <div v-else>
-      <table class="responsive-table container mx-auto">
-        <thead>
-          <tr>
-            <th>Product</th>
-            <th>Price</th>
-            <th>Quantity</th>
-            <th>Subtotal</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="item in cartItems" :key="item.id">
-            <td>
-              <img
-                :src="
-                  item.productModel?.images.find(image => image.isPrimary)
-                    ?.optimizeUrl ??
-                  item.images?.find(image => image.isPrimary)?.optimizeUrl
-                "
-                alt="Product Image"
-              />
-              {{ item.productModel?.name ?? item.name }}
-            </td>
-            <td>
-              KES
-              {{ formattedPrice(item.productModel?.price ?? item.price) }}
-            </td>
-            <td>
-              <input
-                type="number"
-                v-model.number="item.quantity"
-                class="w-16 border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-gray-500"
-                @change="updateQuantity(item.id, item.quantity)"
-                min="1"
-              />
-            </td>
-            <td>
-              KES
-              {{
-                formattedPrice(
-                  item.productModel?.price ?? item.price * item.quantity
-                )
-              }}
-            </td>
-            <td>
-              <button
-                @click="removeItem(item)"
-                style="
-                  background-color: #2869a5;
-                  color: white;
-                  border: none;
-                  padding: 5px 10px;
-                  border-radius: 4px;
-                  cursor: pointer;
-                "
+    <div v-else class="mx-auto container">
+      <div class="bg-red-10 rounded-lg p-4">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-lg font-semibold text-gray-700">
+            Cart ({{ cartItems.length }})
+          </h3>
+          <NuxtLink to="/cart">
+            <a
+              href="#"
+              class="text-primary hover:text-orange-600 text-sm font-semibold flex items-center"
+            >
+              <!-- See All <i class="ml-1 pi pi-angle-right"></i> -->
+            </a>
+          </NuxtLink>
+        </div>
+
+        <div class="bg-white mx-auto">
+          <div class="bg-white grid grid-cols-12 gap-4">
+            <div class="col-span-12 md:col-span-9">
+              <div
+                class="rounded-lg p-4 gap-3 pb-4 mb-2 border"
+                v-for="item in cartItems"
+                :key="item.id"
               >
-                Remove
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <div class="flex container mx-auto justify-end">
-        <div class="cart-total border p-12 ml-auto">
-          <h3>Cart Total</h3>
-          <p>Subtotal: KES {{ formattedPrice(cartTotal) }}</p>
-          <!-- <p>Shipping: Free</p> -->
-          <hr />
-          <p>
-            <strong>Total: KES {{ formattedPrice(cartTotal) }}</strong>
-          </p>
-          <button class="checkout-btn" @click="proceedToCheckout">
-            Proceed to checkout
-          </button>
+                <div class="flex items-start">
+                  <!-- Product Image -->
+                  <img
+                    class="w-20 h-20 object-contain"
+                    :src="
+                      item.productModel?.images.find(image => image.isPrimary)
+                        ?.optimizeUrl ??
+                      item.images?.find(image => image.isPrimary)?.optimizeUrl
+                    "
+                    alt="Product Image"
+                  />
+
+                  <!-- Product Details -->
+                  <div class="ml-4 flex-grow">
+                    <h2 class="text-lg font-medium">
+                      {{ item.productModel?.name ?? item.name }}
+                    </h2>
+                    <!-- <p class="text-gray-600">
+                    Seller: <span class="font-bold">Jumia</span>
+                  </p> -->
+                    <p class="text--500 text-sm">
+                      {{ item.productModel.features[0]?.description }}
+                    </p>
+                    <!-- <img
+                    src="https://upload.wikimedia.org/wikipedia/commons/9/99/Jumia_Express_Logo.png"
+                    class="w-20"
+                    alt="Jumia Express"
+                  /> -->
+                  </div>
+
+                  <!-- Price -->
+                  <div class="text-right">
+                    <p class="text-xl font-semibold text-gray-900">
+                      Ksh
+                      {{
+                        formattedPrice(item.productModel?.price ?? item.price)
+                      }}
+                    </p>
+                    <!-- <p class="text-gray-500 line-through text-sm">KSh 1,300</p> -->
+                    <!-- <p class="text-primary text-sm font-bold">-20%</p> -->
+                  </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex items-center justify-between mt-4">
+                  <!-- Remove Button -->
+                  <button
+                    @click="removeItem(item)"
+                    class="text-red-500 flex items-center"
+                  >
+                    <span class="mr-2">🗑️</span> Remove
+                  </button>
+
+                  <!-- Quantity Control -->
+                  <div class="flex items-center">
+                    <button
+                      @click="updateQuantity(item.id, item.quantity - 1)"
+                      class="bg-gray-300 px-3 py-1 rounded-lg"
+                      :disabled="item.quantity <= 1"
+                    >
+                      -
+                    </button>
+                    <span class="px-4">{{ item.quantity }}</span>
+                    <button
+                      @click="updateQuantity(item.id, item.quantity + 1)"
+                      class="bg-primary text-white px-3 py-1 rounded-lg"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Cart Total & Checkout - Takes 4 Columns -->
+            <!-- Cart Total & Checkout - Takes 4 Columns -->
+            <div class="col-span-12 md:col-span-3">
+              <div class="cart-total rounded-lg">
+                <h3 class="text-lg font-semibold">Cart Total</h3>
+                <p class="text-gray-600">
+                  Subtotal: KES {{ formattedPrice(cartTotal) }}
+                </p>
+                <hr class="my-2" />
+                <p class="text-lg font-bold">
+                  Total: KES {{ formattedPrice(cartTotal) }}
+                </p>
+                <button
+                  class="w-full bg-primary text-white py-2 mt-4 rounded-lg hover:bg-secondary"
+                  @click="proceedToCheckout"
+                >
+                  Checkout ({{ formattedPrice(cartTotal) }})
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
-    <div class="cart-actions">
-      <!-- <div class="coupon">
-                <input v-model="coupon" type="text" placeholder="Coupon Code" />
-                <button @click="applyCoupon">Apply Coupon</button>
-            </div> -->
-    </div>
+    <!-- <div class="cart-actions">
+      <div class="coupon">
+        <input v-model="coupon" type="text" placeholder="Coupon Code" />
+        <button @click="applyCoupon">Apply Coupon</button>
+      </div>
+    </div> -->
   </div>
 </template>
 <script setup>

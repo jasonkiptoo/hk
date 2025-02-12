@@ -80,7 +80,7 @@ export const useProductStore = defineStore("product", {
         const { $axios } = useNuxtApp();
         if (userStore.isLoggedIn) {
           const response = await $axios.post("/product/cart/add", {
-            productModelId: product.id,
+            productModelId: product.productModelId || product.id,
             quantity,
             userId: user.id,
           });

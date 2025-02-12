@@ -1,132 +1,173 @@
 <template>
   <div class="container mx-auto pt-12">
-    <div class="breadcrumbs">
+    <!-- <div class="breadcrumbs">
       <p>/ View Cart / <strong>Checkout</strong></p>
-    </div>
+    </div> -->
 
-    <div class="checkout-container">
+    <div class="checkout-container flex flex-col md:flex-row gap-8 p-4 md:p-8">
       <!-- Billing Details -->
-      <div class="billing-details">
-        <h2>Billing Details</h2>
-        <form>
+      <div class="billing-details flex-1 bg-white p-6 rounded-lg shadow">
+        <h2 class="text-xl font-semibold mb-4">Billing Details</h2>
+        <form class="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div class="form-group">
-            <label for="first-name">First Name*</label>
+            <label for="first-name" class="block text-sm font-medium mb-1"
+              >First Name*</label
+            >
             <input
               type="text"
               id="first-name"
               v-model="user.firstName"
               placeholder="First Name"
               required
+              class="w-full p-2 border rounded"
             />
           </div>
           <div class="form-group">
-            <label for="company-name">Company Name</label>
-            <input type="text" id="company-name" placeholder="Company Name" />
+            <label for="last-name" class="block text-sm font-medium mb-1"
+              >Last Name*</label
+            >
+            <input
+              type="text"
+              id="last-name"
+              v-model="user.lastName"
+              placeholder="Last Name"
+              required
+              class="w-full p-2 border rounded"
+            />
           </div>
           <div class="form-group">
-            <label for="street-address">Street Address*</label>
+            <label for="company-name" class="block text-sm font-medium mb-1"
+              >Company Name</label
+            >
+            <input
+              type="text"
+              id="company-name"
+              placeholder="Company Name"
+              class="w-full p-2 border rounded"
+            />
+          </div>
+          <div class="form-group">
+            <label for="street-address" class="block text-sm font-medium mb-1"
+              >Street Address*</label
+            >
             <input
               type="text"
               id="street-address"
               placeholder="Street Address"
               required
+              class="w-full p-2 border rounded"
             />
           </div>
           <div class="form-group">
-            <label for="apartment">Apartment, floor, etc. (optional)</label>
+            <label for="apartment" class="block text-sm font-medium mb-1"
+              >Apartment, floor, etc. (optional)</label
+            >
             <input
               type="text"
               id="apartment"
               placeholder="Apartment, floor, etc."
+              class="w-full p-2 border rounded"
             />
           </div>
           <div class="form-group">
-            <label for="city">Town/City*</label>
-            <input type="text" id="city" placeholder="Town/City" required />
+            <label for="city" class="block text-sm font-medium mb-1"
+              >Town/City*</label
+            >
+            <input
+              type="text"
+              id="city"
+              placeholder="Town/City"
+              required
+              class="w-full p-2 border rounded"
+            />
           </div>
           <div class="form-group">
-            <label for="phone">Phone Number*</label>
+            <label for="phone" class="block text-sm font-medium mb-1"
+              >Phone Number*</label
+            >
             <input
               type="tel"
               id="phone"
               v-model="user.phoneNumber"
               placeholder="Phone Number"
               required
+              class="w-full p-2 border rounded"
             />
           </div>
           <div class="form-group">
-            <label for="email">Email Address*</label>
+            <label for="email" class="block text-sm font-medium mb-1"
+              >Email Address*</label
+            >
             <input
               type="email"
               id="email"
               v-model="user.email"
               placeholder="Email Address"
               required
+              class="w-full p-2 border rounded"
             />
           </div>
         </form>
       </div>
 
       <!-- Cart Summary -->
-      <div class="cart-summary card">
-        <h3>Cart Summary</h3>
+      <div
+        class="cart-summary bg-white p-6 rounded-lg w-full md:max-w-sm shadow"
+      >
+        <h3 class="text-lg font-semibold mb-4">Cart Summary</h3>
 
         <!-- Cart Items -->
-        <div class="cart-items">
-          <div v-for="item in cartItems" :key="item.id" class="cart-item">
+        <div class="cart-items space-y-4">
+          <div
+            v-for="item in cartItems"
+            :key="item.id"
+            class="cart-item flex flex-col sm:flex-row items-center gap-4 border-b pb-3"
+          >
             <img
               :src="
                 item.productModel.images[0]?.optimizeUrl ||
                 'https://via.placeholder.com/80x80'
               "
+              class="w-16 h-16 object-cover rounded"
             />
-            <p>{{ item.productModel.name }}</p>
-            <p>
-              KES {{ formattedPrice(item.productModel.price * item.quantity) }}
-            </p>
+            <div class="flex-1 text-center sm:text-left">
+              <p class="text-sm">{{ item.productModel.name }}</p>
+              <p class="text-gray-600 text-xs">
+                Ksh
+                {{ formattedPrice(item.productModel.price * item.quantity) }}
+              </p>
+            </div>
           </div>
         </div>
 
         <!-- Bottom Section -->
-        <div class="cart-summary-bottom">
-          <p>
-            Subtotal<strong
-              ><span class="flex align-center justify-end">
-                {{ formattedPrice(cartTotal) }}</span
-              ></strong
-            >
+        <div class="cart-summary-bottom mt-4">
+          <p class="flex justify-between text-sm">
+            Subtotal
+            <strong class="text-lg">{{ formattedPrice(cartTotal) }}</strong>
           </p>
-          <hr />
-          <p>
+          <hr class="my-2" />
+          <p class="flex justify-between text-lg font-semibold">
             Total
-            <strong>
-              <span class="flex justify-end">
-                KES {{ formattedPrice(cartTotal) }}
-              </span></strong
-            >
+            <strong class="text-lg">Ksh {{ formattedPrice(cartTotal) }}</strong>
           </p>
 
           <!-- Payment Methods -->
-          <div class="payment-methods flex gap-2 items-center">
+          <div
+            class="payment-methods flex flex-col sm:flex-row items-center gap-2 mt-4"
+          >
             <img
               src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/M-PESA_LOGO-01.svg/512px-M-PESA_LOGO-01.svg.png?20191120100524"
-              class="w-1/4"
-              alt=""
+              class="w-16 sm:w-1/4"
+              alt="M-Pesa"
             />
-            <label>
-              {{ user.phoneNumber }}
-              <!-- <input type="radio" name="payment-method" value="bank" /> M-Pesa -->
-            </label>
-            <!-- <label>
-                            <input type="radio" name="payment-method" value="cash" checked /> Cash on delivery
-                        </label> -->
+            <label class="text-sm font-medium">{{ user.phoneNumber }}</label>
           </div>
 
           <!-- Place Order Button -->
-          <!-- <button class="place-order-btn" @click="placeOrder()">Place Order</button> -->
           <Button
             type="button"
-            class="place-order-btn"
+            class="place-order-btn w-full bg-green-600 text-white py-2 mt-4 rounded-lg hover:bg-green-700"
             label="Place Order"
             :loading="loading"
             @click="placeOrder()"
