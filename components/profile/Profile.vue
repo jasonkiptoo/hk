@@ -1,80 +1,8 @@
 <template>
-  <div class="container mx-auto my-10 px-4">
-    <!-- Breadcrumb Navigation -->
-    <div class="breadcrumb text-sm mb-4 card">
-      <div class="card flex">
-        <Breadcrumb :home="home" :model="items">
-          <template #item="{ item, props }">
-            <router-link
-              v-if="item.route"
-              v-slot="{ href, navigate }"
-              :to="item.route"
-              custom
-            >
-              <a :href="href" v-bind="props.action" @click="navigate">
-                <span :class="[item.icon, 'text-color']" />
-                <span class="text-primary font-semibold">{{ item.label }}</span>
-              </a>
-            </router-link>
-            <a
-              v-else
-              :href="item.url"
-              :target="item.target"
-              v-bind="props.action"
-            >
-              <span class="text-surface-700 dark:text-surface-0">{{
-                item.label
-              }}</span>
-            </a>
-          </template>
-        </Breadcrumb>
-      </div>
-    </div>
-
-    <!-- Mobile Sidebar Toggle -->
-    <button
-      class="md:hidden bg-red-500 text-white px-4 py-2 rounded mb-4"
-      @click="toggleSidebar"
-    >
-      {{ sidebarOpen ? "Close Menu" : "Menu" }}
-    </button>
-
+  <div class="container mx-auto">
     <div class="flex flex-col md:flex-row">
       <!-- Sidebar -->
-      <aside
-        :class="[
-          'md:w-1/4 w-full bg-white shadow-md md:shadow-none md:block fixed md:relative top-0 left-0 h-full md:h-auto transform transition-transform duration-300 ease-in-out',
-          sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0',
-        ]"
-      >
-        <ul class="space-y-2 text-gray-600 pt-2 p-4">
-          <li class="font-bold text-red-500">Manage My Account</li>
-          <li @click="setActiveSection('profile')" class="cursor-pointer">
-            Profile
-          </li>
-          <li
-            @click="setActiveSection('paymentOptions')"
-            class="cursor-pointer"
-          >
-            Payment Options
-          </li>
-          <li
-            @click="setActiveSection('orders')"
-            class="font-bold text-red-500 mt-4 cursor-pointer"
-          >
-            My Orders
-          </li>
-        </ul>
-        <button
-          @click="logout"
-          class="bg-red-500 text-white px-4 py-2 rounded w-full mt-4 md:mt-12"
-        >
-          Logout
-        </button>
-      </aside>
-
-      <!-- Main Content Section -->
-      <main class="md:w-3/4 w-full bg-white border p-4">
+      <main class="w-full bg-white border p-4">
         <!-- Profile Section -->
         <div v-if="activeSection === 'profile'">
           <h2 class="text-xl font-bold mb-4 text-red-500">Edit Your Profile</h2>
