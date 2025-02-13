@@ -45,7 +45,26 @@
           aria-controls="overlay_menu"
           class="bg-transparent border-none shadow-none p-2 text-black"
         />
-        <Menu ref="menu" id="overlay_menu" :model="items" :popup="true" />
+        <Menu
+          ref="menu"
+          id="overlay_menu"
+          :model="items"
+          :popup="true"
+          class="wmd:w-60"
+        >
+          <template #item="{ item, props }">
+            <a v-ripple class="flex items-center" v-bind="props.action">
+              <span :class="item.icon" />
+              <span>{{ item.label }}</span>
+              <Badge
+                v-if="item.badge"
+                class="ml-auto"
+                :value="formattedPrice(item.badge)"
+                severity="warning"
+              />
+            </a>
+          </template>
+        </Menu>
       </div>
 
       <!-- Desktop Layout (Hidden on Mobile) -->
@@ -110,7 +129,7 @@
 
         <div class="ml-4 hidden sm:flex flex-col font-bold">
           <span class="text-xs text-gray-400">My Cart</span>
-          <span>KES {{ formattedPrice(cartTotal) }}</span>
+          <span>Ksh {{ formattedPrice(cartTotal) }}</span>
         </div>
       </div>
     </div>
@@ -223,7 +242,6 @@ const routeTo = () => {
   // const userStore = useUserStore();
 };
 const navigateToProduct = event => {
-  console.log(event, "event");
   if (event && event.value && event.value.id) {
     router.push({
       path: `/products/${event.value.id}`,
@@ -347,28 +365,35 @@ const goToCart = () => {
 };
 const goToProfile = () => {
   router.push({
-    path: `/profile`,
+    path: `/my-account`,
   });
 };
+const welcomeLabel = computed(() => {
+  return `Welcome ${userStore.isLoggedIn ? userStore.user.firstName : "User"}`;
+});
 
 const items = ref([
   {
-    label: "My Account",
+    label: welcomeLabel,
     items: [
       {
         label: "My Account",
         icon: "pi pi-user",
-        command: goToProfile, // Navigate to profile when clicked
+        command: goToProfile,
       },
       {
         label: "Wishlist",
         icon: "pi pi-heart",
-        command: goToWishList, // Navigate to wishlist
+        command: goToWishList,
+        badge: computed(() =>
+          wishListCount.value > 0 ? wishListCount.value : null
+        ),
       },
       {
         label: "Cart",
         icon: "pi pi-shopping-cart",
-        command: goToCart, // Navigate to cart
+        command: goToCart,
+        badge: computed(() => (cartTotal.value > 0 ? cartTotal.value : null)),
       },
     ],
   },

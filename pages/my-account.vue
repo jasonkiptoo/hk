@@ -10,11 +10,9 @@
       <TabMenu v-model:activeIndex="selectedIndex" :model="tabs" />
     </div>
 
-    <div
-      class="flex flex-col md:flex-row bg-gray-100 shadow-md rounded-md min-h-[80vh]"
-    >
+    <div class="flex flex-col md:flex-row bg-gray-100 rounded-md min-h-[80vh]">
       <!-- Sidebar for Large Screens -->
-      <div class="hidden md:flex w-64 bg-white shadow-md flex-col">
+      <div class="hidden md:flex w-64 bg-white shadow-sm flex-col">
         <div class="p-4 text-lg font-semibold border-b">My Account</div>
         <div class="flex-1">
           <ul>
@@ -53,6 +51,9 @@ import Orders from "@/components/profile/Orders.vue";
 // import Wishlist from "@/components/profile/Wishlist.vue";
 import TabMenu from "primevue/tabmenu";
 
+definePageMeta({
+  middleware: ["auth"],
+});
 export default {
   components: { Profile, Orders, TabMenu },
   setup() {

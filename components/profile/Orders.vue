@@ -1,7 +1,7 @@
 <template>
   <div class="">
     <div class="flex flex-col">
-      <div class="p-4 bg-gray-100">
+      <div class="p-4">
         <div class="flex space-x-4 mb-4 overflow-x-auto">
           <button
             v-for="filter in filters"

@@ -39,14 +39,14 @@
 
         <!-- Colors -->
         <div class="flex items-center space-x-4">
-          <p>{{ product.description }}</p>
-          <span class="font-medium">Colors:</span>
+          <p v-for="feature in product.features">{{ feature.description }}</p>
+          <!-- <span class="font-medium">Colors:</span>
           <div
             v-for="(color, index) in product.colors"
             :key="index"
             :style="{ backgroundColor: color }"
             class="w-6 h-6 rounded-full border border-gray-300 cursor-pointer"
-          ></div>
+          ></div> -->
         </div>
 
         <!-- Size Selector -->
@@ -109,12 +109,13 @@
 
       <!-- Details Section -->
       <div v-if="activeTab === 'details'" class="mt-6 space-y-6">
-        <ol>
+        <p v-html="formatDescription(product.description)"></p>
+        <!-- <ol>
           <li
             class="text-gray-600 leading-relaxed pt-8"
             v-for="item in product.features"
           >
-            {{ item.description }}
+            {{ product.description }}
           </li>
         </ol>
 
@@ -122,7 +123,7 @@
           <li v-for="(detail, index) in product.details" :key="index">
             {{ detail }}
           </li>
-        </ul>
+        </ul> -->
       </div>
 
       <!-- Reviews Section -->
@@ -311,6 +312,9 @@ onMounted(() => {
 
 const setMainImage = image => {
   product.value.image = image;
+};
+const formatDescription = description => {
+  return description ? description.replace(/\r\n/g, "<br>") : "";
 };
 const addToCart = async () => {
   const userStore = useUserStore();
