@@ -1,6 +1,10 @@
 <template>
-  <div class="" style="background-color: white;">
-    <SignupForm v-if="isSignup" @toggle="toggleForm" @show-questionnaire="showQuestionnaire" />
+  <div class="" style="background-color: white">
+    <SignupForm
+      v-if="isSignup"
+      @toggle="toggleForm"
+      @show-questionnaire="showQuestionnaire"
+    />
     <QuestionnaireForm v-else-if="showQuestionnaireVisible" />
     <LoginForm v-else @toggle="toggleForm" />
   </div>

@@ -1,5 +1,5 @@
 <template>
-  <div class="flex w-full h-screen items-center justify-center p-6 pt-28">
+  <div class="flex w-full items-center justify-center p-6 pt-8">
     <!-- <img src="@/assets/images/logoo.png" alt="Login" class="h-28 w-28" /> -->
     <Stepper v-model:value="activeStep" class="w-full max-w-lg min-h-[20rem]">
       <StepList>
